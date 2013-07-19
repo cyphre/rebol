@@ -1,0 +1,14 @@
+These are the scripts that are running CPPS.exe for all of the segmented .WAV files. 
+
+CPPS.exe is a Windows only file, so if you are wanting to learn how to do this in the future, you will have to do it on Windows.  Also the file pathnames in this are for MY computer specifically, so if you did want to learn how to run them, you need to adjust the filepaths accordingly.
+
+If you knew how to run a REBOL script (a programming language I am very familiar with), the order would be:
+
+1.  CPPS-clear.r -- This script deletes all the .f0c .fc .wr files that CPPS.exe generates when it analyzes a .WAV file.  I am not actually sure if this step is necessary, but it makes things clean, and I like that.
+
+2.  CPPS-all.r -- This script looks and finds all the .WAV files in the 'segmented' folder and basically runs "CPPS.exe file.WAV" in the command prompt (The black screen where you type commands).  This generates all those .f0c .fc .wr files.
+
+4.  CPPS-calc.r -- This script looks in the 'segmented' folder and loads each .f0c file that has the calculations that CPPS.exe calculates.   It only pulls the data in the last column which is the CPP value (I guess).   It calculates the mean of all of these things and outputs a tab delimited text file (all-cpp-data.txt) with a structure like this:
+
+filename	CPP-mean
+NB1_aMha.f0c	15.7713333333333
