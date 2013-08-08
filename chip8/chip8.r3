@@ -27,7 +27,7 @@ chip8: make object! [
 	; program counter PC
 	pc: none
 
-	gfx: array gfx-size: (64 * 32)
+	;gfx: array gfx-size: (64 * 32)
 	gfx-scale: 10
 	gfx-img: make image! reduce [to-pair reduce [64 * gfx-scale 32 * gfx-scale] white]
 	draw-flag: false
@@ -63,16 +63,23 @@ chip8: make object! [
 		pc: 32
 		opcode: to-binary [0]
 		i: 1
-		sp: to-binary [0]
+		sp: 1
 		repeat num 4096 [poke memory num to-binary [0]]
 		repeat num 16 [poke v num to-binary [0]]
-		repeat num gfx-size [poke gfx num false]
+		;repeat num gfx-size [poke gfx num false]
 		repeat num 16 [poke stack num to-binary [0]]
 		
 		;;load fontset
 		repeat num 80 [poke memory num (pick fontset num)]
 		
 		;;reset timers
+	]
+	
+	v-x: func [oc] [
+		(1 + shift to-integer (oc and #{0F00}) -8)
+	]
+	v-y: func [oc] [
+		(1 + shift to-integer (oc and #{00F0}) -4)
 	]
 	
 	increment-pc: does [pc: pc + 2]
@@ -89,9 +96,12 @@ chip8: make object! [
 					#{0000} [					
 						;;clear the screen
 						gfx-img: make image! to-pair reduce [64 * gfx-scale 32 * gfx-scale] black
+						increment-pc
 					]
 					#{000E} [
-						; returns from subroutine 
+						; returns from subroutine
+						sp: sp - 1
+						increment-pc
 					]
 					
 				] [prin "ERROR: Unknown 0x0XXX OPCODE:" print oc]
@@ -106,58 +116,80 @@ chip8: make object! [
 
 				poke stack sp pc
 				sp: sp + 1
-				pc: oc and #{0FFF}
+				pc: to-integer oc and #{0FFF}
 			]
 			#{3000} [
 				;; Skips the next instruction if VX equals NN.
-
+				nn: (oc and #{00FF})
+				either ((pick v v-x) = nn) [
+					increment-pc
+					increment-pc
+				] [increment-pc]		
 			]
 			#{4000} [
 				;; Skips the next instruction if VX doesn't equal NN.
-
+				nn: (oc and #{00FF})
+				either ((pick v v-x) != nn) [
+					increment-pc
+					increment-pc
+				] [increment-pc]
 			]
 			#{5000} [
 				;; Skips the next instruction if VX equals VY.
-
+				either ((pick v v-x) = (pick v v-y)) [
+					increment-pc
+					increment-pc
+				] [increment-pc]
 			]
 			#{6000} [
 				;; Sets VX to NN.
-
+				nn: (oc and #{00FF})
+				poke v v-x nn
+				increment-pc
 			]
 			#{7000} [
 				;; Adds NN to VX.
-
+				x: v-x
+				nn: to-integer (oc and #{00FF})
+				poke v x to-binary reduce [(nn + to-integer (pick v x))]
+				increment-pc
 			]
 			#{8000} [
 				switch/default (oc and #{000F}) [
 					#{0000} [
 					;8XY0;Sets VX to the value of VY.
+						poke v v-x (pick v v-y)
+						increment-pc
 					]
 					#{0001} [
 					;8XY1;Sets VX to VX or VY.
+						poke v x ((pick v v-x) or (pick v v-y))
+						increment-pc
 					]
 					#{0002} [
 					;8XY2;Sets VX to VX and VY.
+						poke v x ((pick v v-x) and (pick v v-y))
+						increment-pc
 					]
 					#{0003} [
 					;8XY3;Sets VX to VX xor VY.
+						poke v x ((pick v v-x) xor (pick v v-y))
+						increment-pc
 					]
 					#{0004} [
 					;; 8XY4 adds register V[x] and V[y], setting v[16] flag if overflowed
-						m: (1 + shift to-integer (oc and #{00F0}) -4)
-						n: (1 + shift to-integer (oc and #{0F00}) -8)
-						either (w: pick v m) > (255 - x: pick v n) [
+						either (w: pick v v-y) > (255 - x: pick v v-x) [
 							poke v 16 #{01}
 						] [
 							poke v 16 #{00}
 						]
-						poke v m (w + x)
+						poke v v-y (w + x)
 						increment-pc
 					]
 					#{0005} [
 					;8XY5;VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
-					#{0006} [
 					]
+					#{0006} [
 					;8XY6;Shifts VX right by one. VF is set to the value of the least significant bit of VX before the shift.[2]
 					]
 					#{0007} [
@@ -187,8 +219,6 @@ chip8: make object! [
 				;;0xDXYN Draws a sprite at coordinate vx, vy that has a width of 8 pixels and a height of N pixels.  Each row of 8 pixels is read as bit-coded starting from memory location I; I value doesn’t change after the execution of this instruction. As described above, VF is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that doesn’t happen.
 				
 				poke v 15 #{00}
-				y: (1 + shift to-integer (oc and #{00F0}) -4)
-				x: (1 + shift to-integer (oc and #{0F00}) -8)
 				height: to-integer (oc and #{000F})
 				repeat num height[
 					;;this will make a string containing the pixels
@@ -197,11 +227,11 @@ chip8: make object! [
 					repeat m 8 [
 						z: first w
 						if (z = #"1") [
-							if ((pick gfx-img to-pair reduce [gfx-scale * (x + m - 1) gfx-scale * (y + num - 1)]) = black) 
+							if ((pick gfx-img to-pair reduce [gfx-scale * (v-x + m - 1) gfx-scale * (v-y + num - 1)]) = black) 
 								[poke v 15 #{01}]
 							repeat num-y gfx-scale [
 								repeat num-x gfx-scale [
-									poke gfx-img to-pair reduce [(gfx-scale * (x + m - 1)) + num-x (gfx-scale * (y + num - 1)) + num-y] black
+									poke gfx-img to-pair reduce [(gfx-scale * (v-x + m - 1)) + num-x (gfx-scale * (v-y + num - 1)) + num-y] black
 								]
 							]
 						]
@@ -244,7 +274,7 @@ chip8: make object! [
 					]
 					#{0033} [
 						;; Stores BCD representation of VX at address I, I + 1 and I + 2
-						m: to-integer pick v (1 + shift to-integer (oc and #{0F00}) -8) 
+						m: to-integer pick v v-x 
 						poke memory i to-binary reduce [x: remainder m 10]
 						poke memory (i + 1) to-binary reduce [((y: remainder m 100) - x) / 10]
 						poke memory (i + 2) to-binary reduce [(m - y) / 100]
