@@ -29,10 +29,7 @@ chip8: make object! [
 
 	gfx: array gfx-size: (64 * 32)
 	gfx-scale: 1
-	gfx-img: make image! to-pair [64 * gfx-scale 32 * gfx-scale] black
-	
-	
-	
+	gfx-img: make image! to-pair reduce [64 * gfx-scale 32 * gfx-scale] black
 	
 	;Timers count at 60 Hz. When set above zero they will count down to zero
 	;The system’s buzzer sounds whenever the sound timer reaches zero.
@@ -196,8 +193,8 @@ chip8: make object! [
 					repeat m 8 [
 						z: first w
 						if (z = #"1") [
-							if (pick gfx-img to-pair [(x + m - 1) (y + num - 1)] = black) [poke v 15 #{01}]
-							poke gfx-img to-pair [(x + m - 1) (y + num - 1)] black
+							if (pick gfx-img to-pair reduce [(x + m - 1) (y + num - 1)] = black) [poke v 15 #{01}]
+							poke gfx-img to-pair reduce [(x + m - 1) (y + num - 1)] black
 						]
 						w: next w
 					]					
