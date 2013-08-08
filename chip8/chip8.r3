@@ -6,7 +6,7 @@ REBOL[
 ]
 
 load-gui
-
+pong: read %games/PONG
 chip8: make object! [
 	;;opcode must be 2 bytes
 	opcode: none
@@ -28,8 +28,9 @@ chip8: make object! [
 	pc: none
 
 	gfx: array gfx-size: (64 * 32)
-	gfx-scale: 1
+	gfx-scale: 10
 	gfx-img: make image! reduce [to-pair reduce [64 * gfx-scale 32 * gfx-scale] white]
+	draw-flag: false
 	
 	;Timers count at 60 Hz. When set above zero they will count down to zero
 	;The system’s buzzer sounds whenever the sound timer reaches zero.
@@ -98,7 +99,7 @@ chip8: make object! [
 			
 			#{1000} [
 				;; Jumps to address NNN.
-
+				oc and #{0FFF}
 			]
 			#{2000} [
 				;; Calls subroutine at NNN.
@@ -185,28 +186,36 @@ chip8: make object! [
 			#{D000} [
 				;;0xDXYN Draws a sprite at coordinate vx, vy that has a width of 8 pixels and a height of N pixels.  Each row of 8 pixels is read as bit-coded starting from memory location I; I value doesn’t change after the execution of this instruction. As described above, VF is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that doesn’t happen.
 				
+				poke v 15 #{00}
 				y: (1 + shift to-integer (oc and #{00F0}) -4)
 				x: (1 + shift to-integer (oc and #{0F00}) -8)
 				height: to-integer (oc and #{000F})
 				repeat num height[
 					;;this will make a string containing the pixels
-					print r: (pick memory (i + num - 1))
+					r: (pick memory (i + num - 1))
 					w: enbase/base r 2
 					repeat m 8 [
 						z: first w
 						if (z = #"1") [
-							if ((pick gfx-img to-pair reduce [(x + m - 1) (y + num - 1)]) = black) [poke v 15 #{01}]
-							poke gfx-img to-pair reduce [(x + m - 1) (y + num - 1)] black
+							if ((pick gfx-img to-pair reduce [gfx-scale * (x + m - 1) gfx-scale * (y + num - 1)]) = black) 
+								[poke v 15 #{01}]
+							repeat num-y gfx-scale [
+								repeat num-x gfx-scale [
+									poke gfx-img to-pair reduce [(gfx-scale * (x + m - 1)) + num-x (gfx-scale * (y + num - 1)) + num-y] black
+								]
+							]
 						]
 						w: next w
-					]					
+					]
+					
 				]
-				
+				draw-flag: true				
 			]
 			#{E000} [
 				switch/default (oc and #{00FF}) [
 					#{009E} [
 						;;Skips the next instruction if the key stored in VX is pressed.
+						(oc and #{0F00})
 					]
 					#{00A1} [
 						;;Skips the next instruction if the key stored in VX isn't pressed.
