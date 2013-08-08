@@ -29,7 +29,7 @@ chip8: make object! [
 
 	gfx: array gfx-size: (64 * 32)
 	gfx-scale: 1
-	gfx-img: make image! to-pair reduce [64 * gfx-scale 32 * gfx-scale] black
+	gfx-img: make image! reduce [to-pair reduce [64 * gfx-scale 32 * gfx-scale] white]
 	
 	;Timers count at 60 Hz. When set above zero they will count down to zero
 	;The system’s buzzer sounds whenever the sound timer reaches zero.
@@ -40,23 +40,23 @@ chip8: make object! [
 	sp: none
 
 	key: array 16
-	fontset: [
-		#{F0} #{90} #{90} #{90} #{F0} // 0
-		#{20} #{60} #{20} #{20} #{70} // 1
-		#{F0} #{10} #{F0} #{80} #{F0} // 2
-		#{F0} #{10} #{F0} #{10} #{F0} // 3
-		#{90} #{90} #{F0} #{10} #{10} // 4
-		#{F0} #{80} #{F0} #{10} #{F0} // 5
-		#{F0} #{80} #{F0} #{90} #{F0} // 6
-		#{F0} #{10} #{20} #{40} #{40} // 7
-		#{F0} #{90} #{F0} #{90} #{F0} // 8
-		#{F0} #{90} #{F0} #{10} #{F0} // 9
-		#{F0} #{90} #{F0} #{90} #{90} // A
-		#{E0} #{90} #{E0} #{90} #{E0} // B
-		#{F0} #{80} #{80} #{80} #{F0} // C
-		#{E0} #{90} #{90} #{90} #{E0} // D
-		#{F0} #{80} #{F0} #{80} #{F0} // E
-		#{F0} #{80} #{F0} #{80} #{80} // F
+	fontset: [ ;; see http://imgur.com/L3YxUmd
+		#{F0} #{90} #{90} #{90} #{F0} ;;// 0
+		#{20} #{60} #{20} #{20} #{70} ;;// 1
+		#{F0} #{10} #{F0} #{80} #{F0} ;;// 2
+		#{F0} #{10} #{F0} #{10} #{F0} ;;// 3
+		#{90} #{90} #{F0} #{10} #{10} ;;// 4
+		#{F0} #{80} #{F0} #{10} #{F0} ;;// 5
+		#{F0} #{80} #{F0} #{90} #{F0} ;;// 6
+		#{F0} #{10} #{20} #{40} #{40} ;;// 7
+		#{F0} #{90} #{F0} #{90} #{F0} ;;// 8
+		#{F0} #{90} #{F0} #{10} #{F0} ;;// 9
+		#{F0} #{90} #{F0} #{90} #{90} ;;// A
+		#{E0} #{90} #{E0} #{90} #{E0} ;;// B
+		#{F0} #{80} #{80} #{80} #{F0} ;;// C
+		#{E0} #{90} #{90} #{90} #{E0} ;;// D
+		#{F0} #{80} #{F0} #{80} #{F0} ;;// E
+		#{F0} #{80} #{F0} #{80} #{80} ;;// F
 	]
 	initialize: does [
 		pc: 32
@@ -87,7 +87,7 @@ chip8: make object! [
 				switch/default (oc and #{000F}) [
 					#{0000} [					
 						;;clear the screen
-						gfx-img: make image! to-pair [64 * gfx-scale 32 * gfx-scale] black
+						gfx-img: make image! to-pair reduce [64 * gfx-scale 32 * gfx-scale] black
 					]
 					#{000E} [
 						; returns from subroutine 
@@ -165,7 +165,7 @@ chip8: make object! [
 					#{000E} [
 					;;Shifts VX left by one. VF is set to the value of the most significant bit of VX before the shift.[2]
 					]
-				] [prin "ERROR: Unknown 0X8XXX OPCODE:" print oc]
+				] [prin "ERROR: Unknown 0x8XXX OPCODE:" print oc]
 			]
 			#{9000} [
 				;; Skips the next instruction if VX doesn't equal VY.
@@ -184,16 +184,18 @@ chip8: make object! [
 			]
 			#{D000} [
 				;;0xDXYN Draws a sprite at coordinate vx, vy that has a width of 8 pixels and a height of N pixels.  Each row of 8 pixels is read as bit-coded starting from memory location I; I value doesn’t change after the execution of this instruction. As described above, VF is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that doesn’t happen.
+				
 				y: (1 + shift to-integer (oc and #{00F0}) -4)
 				x: (1 + shift to-integer (oc and #{0F00}) -8)
 				height: to-integer (oc and #{000F})
 				repeat num height[
 					;;this will make a string containing the pixels
-					w: enbase/base (pick memory (i + num - 1)) 2
+					print r: (pick memory (i + num - 1))
+					w: enbase/base r 2
 					repeat m 8 [
 						z: first w
 						if (z = #"1") [
-							if (pick gfx-img to-pair reduce [(x + m - 1) (y + num - 1)] = black) [poke v 15 #{01}]
+							if ((pick gfx-img to-pair reduce [(x + m - 1) (y + num - 1)]) = black) [poke v 15 #{01}]
 							poke gfx-img to-pair reduce [(x + m - 1) (y + num - 1)] black
 						]
 						w: next w
@@ -272,7 +274,9 @@ chip8: make object! [
 	execute-opcode: does [
 
 	]
-	
+	view-gfx: does [
+		view layout [image gfx-img]
+	]
 	update-timers: does [
 		
 	]
