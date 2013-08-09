@@ -6,7 +6,11 @@ REBOL[
 ]
 
 load-gui
-pong: read %games/PONG
+
+pong: #{6A026B0C6C3F6D0CA2EADAB6DCD66E0022D4660368026060F015F0073000121AC717770869FFA2F0D671A2EADAB6DCD66001E0A17BFE6004E0A17B02601F8B02DAB6600CE0A17DFE600DE0A17D02601F8D02DCD6A2F0D67186848794603F8602611F871246021278463F1282471F69FF47006901D671122A68026301807080B5128A68FE630A807080D53F0112A2610280153F0112BA80153F0112C880153F0112C26020F01822D48E3422D4663E3301660368FE33016802121679FF49FE69FF12C87901490269016004F0187601464076FE126CA2F2FE33F265F12964146500D4557415F229D45500EE808080808080800000000000}
+
+wall: #{12182057414C4C2062792044617669642057494E54455220A2E460006100621ED011D021700830401220A2DF603E6101D0157105311A1230D0146300C40F7408650184516503660267018840780269016A046B00A2DAD345D781FC0A22C46C01FC15FC073C001262A2DA8C708D80E99E127C4401127CD34574FED345EA9E128A4419128AD3457402D3458754886447016503473D65FD48016602481D66FEDCD1D7813701125E8C808C456D009CD012BE7D013D0512ACFC0A22C46B00125C22C47B01125CA2E5FB336C346D02F265F129DCD57C05F229DCD500EE8080808080E0E0E0E0E0FF}
+
 chip8: make object! [
 	;;opcode must be 2 bytes
 	opcode: none
@@ -16,6 +20,7 @@ chip8: make object! [
 	;;;0x050-0x0A0 - Used for the built in 4x5 pixel font set (0-F)
 	;;;0x200-0xFFF - Program ROM and work RAM
 
+	program: none
 	memory: array 4096
 
 	;CPU Register, 15 8-bit registers, 16th is carry flag
@@ -59,36 +64,54 @@ chip8: make object! [
 		#{F0} #{80} #{F0} #{80} #{F0} ;;// E
 		#{F0} #{80} #{F0} #{80} #{80} ;;// F
 	]
-	initialize: does [
-		pc: 32
+	initialize: func [/local u] [
+		
+		pc: 513
 		opcode: to-binary [0]
 		i: 1
 		sp: 1
-		repeat num 4096 [poke memory num to-binary [0]]
+		;repeat num 4096 [poke memory num to-binary [0]]
 		repeat num 16 [poke v num to-binary [0]]
 		;repeat num gfx-size [poke gfx num false]
 		repeat num 16 [poke stack num to-binary [0]]
 		
-		;;load fontset
-		repeat num 80 [poke memory num (pick fontset num)]
+		;;load fontset --> Should be in #{0050} to #{00A0} which translates to memory index 81 to 161
+		repeat num 80 [poke memory (num) (pick fontset num)]
 		
+		;;load game to memory -> 
+		program: pong
+		repeat num (length? program) [
+			;print reduce ["Setting memory location " (num + 512) " to value of " to-binary reduce [(pick program num)]] 
+			;u: (to-binary reduce [(pick program num)])
+			;print u
+			poke memory (num + 512) copy (to-binary reduce [(pick program num)])
+		]
 		;;reset timers
 	]
-	
-	v-x: func [oc] [
-		(1 + shift to-integer (oc and #{0F00}) -8)
+	load-program: does [
+		repeat num (length? program) [
+			poke memory (num + 512) to-binary reduce [(pick program num)]
+		]
 	]
-	v-y: func [oc] [
-		(1 + shift to-integer (oc and #{00F0}) -4)
+	v-x: func [o-c] [
+		(1 + shift to-integer (o-c and #{0F00}) -8)
+	]
+	v-y: func [o-c] [
+		(1 + shift to-integer (o-c and #{00F0}) -4)
 	]
 	
 	increment-pc: does [pc: pc + 2]
 	
-	fetch-opcode: does [
-		return append (pick memory pc) (pick memory (pc + 1))
+	fetch-opcode: func [/local u] [
+		u: copy #{0000}
+		print [{>>PC:} pc]
+		poke u 1 to-integer (pick memory pc)
+		poke u 2 to-integer (pick memory pc + 1)
+		u
+		;return append copy (pick memory pc) copy (pick memory (pc + 1))
 	]
 	
-	decode-opcode: func [oc /local n m w x] [
+	decode-opcode: func [oc /local n m w x u x-coord y-coord height] [
 		switch/default (oc and #{F000}) [
 			
 			#{0000} [
@@ -104,24 +127,30 @@ chip8: make object! [
 						increment-pc
 					]
 					
-				] [prin "ERROR: Unknown 0x0XXX OPCODE:" print oc]
+				] [prin "ERROR: Unknown 0x0XXX OPCODE:" print oc increment-pc]
 			]
-			
+			.
 			#{1000} [
 				;; Jumps to address NNN.
-				oc and #{0FFF}
+				print oc
+				pc: to-integer (oc and #{0FFF})
+
 			]
 			#{2000} [
 				;; Calls subroutine at NNN.
-
+				
 				poke stack sp pc
 				sp: sp + 1
-				pc: to-integer oc and #{0FFF}
+				u: (oc and #{0FFF})
+				pc: to-integer (oc and #{0FFF})
+				;pc: 512 + to-integer (oc and #{0FFF})
+				print ["Subroutine at memory index " pc " = " (pick memory pc) (pick memory (pc + 1))]
 			]
 			#{3000} [
 				;; Skips the next instruction if VX equals NN.
 				nn: (oc and #{00FF})
-				either ((pick v v-x) = nn) [
+				print [{V[ } (v-x oc) {] =} (pick v (v-x oc)) {will skip if equal to} nn {and is} ((pick v (v-x oc)) = nn)]
+				either ((pick v (v-x oc)) = nn) [
 					increment-pc
 					increment-pc
 				] [increment-pc]		
@@ -129,14 +158,14 @@ chip8: make object! [
 			#{4000} [
 				;; Skips the next instruction if VX doesn't equal NN.
 				nn: (oc and #{00FF})
-				either ((pick v v-x) != nn) [
+				either ((pick v (v-x oc)) != nn) [
 					increment-pc
 					increment-pc
 				] [increment-pc]
 			]
 			#{5000} [
 				;; Skips the next instruction if VX equals VY.
-				either ((pick v v-x) = (pick v v-y)) [
+				either ((pick v (v-x oc)) = (pick v (v-y oc))) [
 					increment-pc
 					increment-pc
 				] [increment-pc]
@@ -144,12 +173,13 @@ chip8: make object! [
 			#{6000} [
 				;; Sets VX to NN.
 				nn: (oc and #{00FF})
-				poke v v-x nn
+				print [{set V[} (v-x oc) {] to } nn]
+				poke v (v-x oc) nn
 				increment-pc
 			]
 			#{7000} [
 				;; Adds NN to VX.
-				x: v-x
+				x: v-x oc
 				nn: to-integer (oc and #{00FF})
 				poke v x to-binary reduce [(nn + to-integer (pick v x))]
 				increment-pc
@@ -187,18 +217,26 @@ chip8: make object! [
 						increment-pc
 					]
 					#{0005} [
-					;8XY5;VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
+						;8XY5;VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
+						
+						increment-pc
 					]
 					#{0006} [
-					;8XY6;Shifts VX right by one. VF is set to the value of the least significant bit of VX before the shift.[2]
+						;8XY6;Shifts VX right by one. VF is set to the value of the least significant bit of VX before the shift.
+						
+						increment-pc
 					]
 					#{0007} [
-					;8XY6;Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
+						;8XY6;Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
+						
+						increment-pc
 					]
 					#{000E} [
-					;;Shifts VX left by one. VF is set to the value of the most significant bit of VX before the shift.[2]
+						;;Shifts VX left by one. VF is set to the value of the most significant bit of VX before the shift.
+						
+						increment-pc
 					]
-				] [prin "ERROR: Unknown 0x8XXX OPCODE:" print oc]
+				] [prin "ERROR: Unknown 0x8XXX OPCODE:" print oc increment-pc]
 			]
 			#{9000} [
 				;; Skips the next instruction if VX doesn't equal VY.
@@ -206,7 +244,8 @@ chip8: make object! [
 			]
 			#{A000} [
 				;;Sets I to the address NNN.
-				i: (oc and #{0FFF})
+				print[{set I to } to-integer (oc and #{0FFF})]
+				i: to-integer (oc and #{0FFF})
 				increment-pc
 			]
 			#{B000} [
@@ -217,28 +256,44 @@ chip8: make object! [
 			]
 			#{D000} [
 				;;0xDXYN Draws a sprite at coordinate vx, vy that has a width of 8 pixels and a height of N pixels.  Each row of 8 pixels is read as bit-coded starting from memory location I; I value doesn’t change after the execution of this instruction. As described above, VF is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that doesn’t happen.
+				;print ["0xDXYN:" opcode]
 				
-				poke v 15 #{00}
 				height: to-integer (oc and #{000F})
-				repeat num height[
-					;;this will make a string containing the pixels
+				poke v 16 #{00}
+				x-coord: (to-integer pick v (v-x oc))
+				y-coord: (to-integer pick v (v-y oc))
+				print [{Draw sprite at} x-coord {x} y-coord {of height} height]
+				
+				repeat num height [
 					r: (pick memory (i + num - 1))
 					w: enbase/base r 2
+					print [{pattern is} w]
+					;;m corresponds to the number of bits in m
 					repeat m 8 [
-						z: first w
-						if (z = #"1") [
-							if ((pick gfx-img to-pair reduce [gfx-scale * (v-x + m - 1) gfx-scale * (v-y + num - 1)]) = black) 
-								[poke v 15 #{01}]
+						if ((first w) = #"1") [
+							coord-pair: to-pair reduce [(gfx-scale * (x-coord + m - 1)) (gfx-scale * (x-coord + num - 1))]
+							;;Collision Detection
+							
+							if  (coord-pair = black) [
+								print {Collision detected}
+								poke v 16 #{01}
+							]
+							
+							;;Draw a GFX-SCALE x GFX-SCALE pixel
+			
 							repeat num-y gfx-scale [
 								repeat num-x gfx-scale [
-									poke gfx-img to-pair reduce [(gfx-scale * (v-x + m - 1)) + num-x (gfx-scale * (v-y + num - 1)) + num-y] black
+									draw-pair: coord-pair + to-pair reduce [num-x num-y ]
+									print [{Drew at } draw-pair]
+									poke gfx-img draw-pair black
 								]
-							]
+							]						
 						]
 						w: next w
-					]
-					
+					]					
 				]
+				
+				increment-pc
 				draw-flag: true				
 			]
 			#{E000} [
@@ -250,7 +305,7 @@ chip8: make object! [
 					#{00A1} [
 						;;Skips the next instruction if the key stored in VX isn't pressed.
 					]
-				] [prin "ERROR: Unknown 0xEXXX OPCODE:" print oc]
+				] [prin "ERROR: Unknown 0xEXXX OPCODE:" print oc increment-pc]
 			]
 			#{F000} [
 				switch/default (oc and #{00FF}) [
@@ -286,9 +341,9 @@ chip8: make object! [
 					#{0066} [
 						;;Fills V0 to VX with values from memory starting at address I.
 					]
-				] [prin "ERROR: Unknown 0XFXXX OPCODE:" print oc]
+				] [prin "ERROR: Unknown 0xFXXX OPCODE:" print oc increment-pc]
 			]
-		] [prin "ERROR: Unknown OPCODE:" print oc]
+		] [prin "ERROR: Unknown OPCODE:" print oc increment-pc]
 	]
 	to-bcd: func [bin /local bcd-table w x y z] [
 		bcd-table: [
@@ -310,9 +365,7 @@ chip8: make object! [
 		append (#{00} or ((switch z bcd-table) and #{0F}))
 			((switch x bcd-table) and #{0F}) or ((switch y bcd-table) and #{F0})
 	]
-	execute-opcode: does [
 
-	]
 	view-gfx: does [
 		view layout [image gfx-img]
 	]
@@ -321,8 +374,8 @@ chip8: make object! [
 	]
 	emulate-cycle: does [
 		opcode: fetch-opcode
+		print [{>Fetched opcode:} opcode]
 		decode-opcode opcode
-		execute-opcode
 		update-timers
 	]
 ]
@@ -333,6 +386,9 @@ chip8/initialize
 
 print "Chip 8 Emulator Initialized..."
 
+print "Chip 8 Emulator Running Program..."
+
+loop (length? chip8/program) / 2 [chip8/emulate-cycle]
 
 print "Chip 8 Emulator Halting..."
 halt
