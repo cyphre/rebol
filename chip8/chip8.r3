@@ -39,8 +39,8 @@ chip8: make object! [
 	
 	;Timers count at 60 Hz. When set above zero they will count down to zero
 	;The system’s buzzer sounds whenever the sound timer reaches zero.
-	delay-timer: to-binary [0]
-	sound-timer: to-binary [0]
+	delay-timer: 0
+	sound-timer: 0
 
 	stack: array 16
 	sp: none
@@ -79,7 +79,7 @@ chip8: make object! [
 		repeat num 80 [poke memory (num) (pick fontset num)]
 		
 		;;load game to memory -> 
-		program: pong
+		program: pong;;wall
 		repeat num (length? program) [
 			;print reduce ["Setting memory location " (num + 512) " to value of " to-binary reduce [(pick program num)]] 
 			;u: (to-binary reduce [(pick program num)])
@@ -124,17 +124,23 @@ chip8: make object! [
 					#{000E} [
 						; returns from subroutine
 						sp: sp - 1
-						increment-pc
+						pc: pick stack sp
+						print [{------------------------>Returning from subroutine to pc =} pc]
 					]
 					
-				] [prin "ERROR: Unknown 0x0XXX OPCODE:" print oc increment-pc]
+				] [
+					;0NNN; Run program at address NNN
+					print oc
+					pc: 1 + to-integer (oc and #{0FFF})
+					;prin "ERROR: Unknown 0x0XXX OPCODE:" print oc 
+					;increment-pc
+				]
 			]
 			.
 			#{1000} [
 				;; Jumps to address NNN.
-				print oc
-				pc: to-integer (oc and #{0FFF})
-
+				print [oc {: Jumping to address} 1 + to-integer (oc and #{0FFF})]
+				pc: 1 + to-integer (oc and #{0FFF})
 			]
 			#{2000} [
 				;; Calls subroutine at NNN.
@@ -142,14 +148,14 @@ chip8: make object! [
 				poke stack sp pc
 				sp: sp + 1
 				u: (oc and #{0FFF})
-				pc: to-integer (oc and #{0FFF})
-				;pc: 512 + to-integer (oc and #{0FFF})
-				print ["Subroutine at memory index " pc " = " (pick memory pc) (pick memory (pc + 1))]
+				;pc: to-integer (oc and #{0FFF})
+				pc: 1 + to-integer (oc and #{0FFF})
+				print ["------------------------>Subroutine at memory index " pc " = " (pick memory pc) (pick memory (pc + 1))]
 			]
 			#{3000} [
 				;; Skips the next instruction if VX equals NN.
 				nn: (oc and #{00FF})
-				print [{V[ } (v-x oc) {] =} (pick v (v-x oc)) {will skip if equal to} nn {and is} ((pick v (v-x oc)) = nn)]
+				print [{------------------------>V[ } (v-x oc) {] =} (pick v (v-x oc)) {will skip if equal to} nn {and is} ((pick v (v-x oc)) = nn)]
 				either ((pick v (v-x oc)) = nn) [
 					increment-pc
 					increment-pc
@@ -158,6 +164,7 @@ chip8: make object! [
 			#{4000} [
 				;; Skips the next instruction if VX doesn't equal NN.
 				nn: (oc and #{00FF})
+				print [{------------------------>V[ } (v-x oc) {] =} (pick v (v-x oc)) {will skip if not equal to} nn {and is} ((pick v (v-x oc)) = nn)]
 				either ((pick v (v-x oc)) != nn) [
 					increment-pc
 					increment-pc
@@ -165,6 +172,7 @@ chip8: make object! [
 			]
 			#{5000} [
 				;; Skips the next instruction if VX equals VY.
+				print [{------------------------>}]
 				either ((pick v (v-x oc)) = (pick v (v-y oc))) [
 					increment-pc
 					increment-pc
@@ -173,57 +181,62 @@ chip8: make object! [
 			#{6000} [
 				;; Sets VX to NN.
 				nn: (oc and #{00FF})
-				print [{set V[} (v-x oc) {] to } nn]
+				print [{------------------------>set V[} (v-x oc) {] to } nn {-->} to-integer nn]
 				poke v (v-x oc) nn
 				increment-pc
 			]
 			#{7000} [
 				;; Adds NN to VX.
-				x: v-x oc
 				nn: to-integer (oc and #{00FF})
-				poke v x to-binary reduce [(nn + to-integer (pick v x))]
+				print [{------------------------>Adding} nn {to the value of v[} (v-x oc) {]=} pick v (v-x oc) {=>} (nn + to-integer (pick v (v-x oc)))]
+				poke v (v-x oc) to-binary copy reduce [(nn + to-integer (pick v (v-x oc)))]
 				increment-pc
 			]
 			#{8000} [
 				switch/default (oc and #{000F}) [
 					#{0000} [
-					;8XY0;Sets VX to the value of VY.
-						poke v v-x (pick v v-y)
+						;8XY0;Sets VX to the value of VY.
+						print [{------------------------>}]
+						poke v (v-x oc) (pick v (v-y oc))
 						increment-pc
 					]
 					#{0001} [
 					;8XY1;Sets VX to VX or VY.
-						poke v x ((pick v v-x) or (pick v v-y))
+						print [{------------------------>}]
+						poke v (v-x oc) ((pick v (v-x oc)) or (pick v (v-y oc)))
 						increment-pc
 					]
 					#{0002} [
 					;8XY2;Sets VX to VX and VY.
-						poke v x ((pick v v-x) and (pick v v-y))
+						print [{------------------------>}]
+						poke v (v-x oc) ((pick v (v-x oc)) and (pick v (v-y oc)))
 						increment-pc
 					]
 					#{0003} [
 					;8XY3;Sets VX to VX xor VY.
-						poke v x ((pick v v-x) xor (pick v v-y))
+						print [{------------------------>}]
+						poke v (v-x oc) ((pick v (v-x oc)) xor (pick v (v-y oc)))
 						increment-pc
 					]
 					#{0004} [
-					;; 8XY4 adds register V[x] and V[y], setting v[16] flag if overflowed
+						;; 8XY4 adds register V[x] and V[y], setting v[16] flag if overflowed
+						print [{------------------------>}]
 						either (w: pick v v-y) > (255 - x: pick v v-x) [
 							poke v 16 #{01}
 						] [
 							poke v 16 #{00}
 						]
-						poke v v-y (w + x)
+						poke v (v-y oc) (w + x)
 						increment-pc
 					]
 					#{0005} [
 						;8XY5;VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
-						
+						print [{------------------------>}]
 						increment-pc
 					]
 					#{0006} [
 						;8XY6;Shifts VX right by one. VF is set to the value of the least significant bit of VX before the shift.
-						
+						print [{------------------------>}]
 						increment-pc
 					]
 					#{0007} [
@@ -244,8 +257,8 @@ chip8: make object! [
 			]
 			#{A000} [
 				;;Sets I to the address NNN.
-				print[{set I to } to-integer (oc and #{0FFF})]
-				i: to-integer (oc and #{0FFF})
+				print[{------------------------>set I to } to-integer (oc and #{0FFF})]
+				i: 1 + to-integer (oc and #{0FFF})
 				increment-pc
 			]
 			#{B000} [
@@ -253,6 +266,8 @@ chip8: make object! [
 			]
 			#{C000} [
 				;;Sets VX to a random number and NN.
+				print[{------------------------>}]
+				increment-pc
 			]
 			#{D000} [
 				;;0xDXYN Draws a sprite at coordinate vx, vy that has a width of 8 pixels and a height of N pixels.  Each row of 8 pixels is read as bit-coded starting from memory location I; I value doesn’t change after the execution of this instruction. As described above, VF is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that doesn’t happen.
@@ -262,7 +277,7 @@ chip8: make object! [
 				poke v 16 #{00}
 				x-coord: (to-integer pick v (v-x oc))
 				y-coord: (to-integer pick v (v-y oc))
-				print [{Draw sprite at} x-coord {x} y-coord {of height} height]
+				print [{------------------------>Draw sprite} i {at} x-coord {x} y-coord {of height} height]
 				
 				repeat num height [
 					r: (pick memory (i + num - 1))
@@ -271,39 +286,48 @@ chip8: make object! [
 					;;m corresponds to the number of bits in m
 					repeat m 8 [
 						if ((first w) = #"1") [
-							coord-pair: to-pair reduce [(gfx-scale * (x-coord + m - 1)) (gfx-scale * (x-coord + num - 1))]
+							coord-pair: to-pair reduce [(gfx-scale * (x-coord + m - 1)) (gfx-scale * (y-coord + num - 1))]
 							;;Collision Detection
 							
-							if  (coord-pair = black) [
+							either  (coord-pair = black) [
 								print {Collision detected}
 								poke v 16 #{01}
-							]
-							
-							;;Draw a GFX-SCALE x GFX-SCALE pixel
-			
-							repeat num-y gfx-scale [
-								repeat num-x gfx-scale [
-									draw-pair: coord-pair + to-pair reduce [num-x num-y ]
-									print [{Drew at } draw-pair]
-									poke gfx-img draw-pair black
+								repeat num-y gfx-scale [
+									repeat num-x gfx-scale [
+										draw-pair: coord-pair + to-pair reduce [num-x num-y]
+										;print [{Drew at } draw-pair {from} coord-pair]
+										poke gfx-img draw-pair white
+									]
 								]
-							]						
+							] [
+								;;Draw a GFX-SCALE x GFX-SCALE pixel
+			
+								repeat num-y gfx-scale [
+									repeat num-x gfx-scale [
+										draw-pair: coord-pair + to-pair reduce [num-x num-y]
+										;print [{Drew at } draw-pair {from} coord-pair]
+										poke gfx-img draw-pair black
+									]
+								]						
+							]
 						]
 						w: next w
 					]					
 				]
-				
 				increment-pc
+				view-gfx
 				draw-flag: true				
 			]
 			#{E000} [
 				switch/default (oc and #{00FF}) [
 					#{009E} [
 						;;Skips the next instruction if the key stored in VX is pressed.
+						print[{------------------------>}]
 						(oc and #{0F00})
 					]
 					#{00A1} [
 						;;Skips the next instruction if the key stored in VX isn't pressed.
+						print[{------------------------>}]
 					]
 				] [prin "ERROR: Unknown 0xEXXX OPCODE:" print oc increment-pc]
 			]
@@ -311,28 +335,44 @@ chip8: make object! [
 				switch/default (oc and #{00FF}) [
 					#{0007} [
 						;;Sets VX to the value of the delay timer.
+						print[{------------------------>}]
+						poke v (v-x oc) append #{} delay-timer
+						increment-pc
 					]
 					#{000A} [
 						;;A key press is awaited, and then stored in VX.
+						print[{------------------------>}]
+						increment-pc
 					]
 					#{0015} [
 						;;Sets the delay timer to VX.
+						print[{------------------------>}]
+						increment-pc
 					]
 					#{0018} [
 						;;Sets the sound timer to VX.
+						print[{------------------------>}]
+						increment-pc
 					]
 					#{001E} [
 						;;Adds VX to I.
+						print[{------------------------>}]
+						increment-pc
 					]
 					#{0029} [
 						;;Sets I to the location of the sprite for the character in VX. Characters 0-F (in hexadecimal) are represented by a 4x5 font.
+						;i: 1 + (5 * to-integer pick v (v-x oc))
+						i: 1 + to-integer pick v (v-x oc)
+						print [{Set i:} i {to the value of v[} (v-x oc) {] =} to-integer pick v (v-x oc) {which is the character} (pick memory to-integer (pick v (v-x oc)))]
+						increment-pc	
 					]
 					#{0033} [
 						;; Stores BCD representation of VX at address I, I + 1 and I + 2
-						m: to-integer pick v v-x 
-						poke memory i to-binary reduce [x: remainder m 10]
+						m: to-integer pick v (v-x oc)
+						poke memory i to-binary reduce [x: remainder m 10] 
 						poke memory (i + 1) to-binary reduce [((y: remainder m 100) - x) / 10]
 						poke memory (i + 2) to-binary reduce [(m - y) / 100]
+						print [{------------------------>set BCD at memory[i]:} x {memory[i+1]:} y {memory [i+2]:} (m - y) / 100]
 						increment-pc
 					]
 					#{0055} [
