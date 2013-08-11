@@ -5,9 +5,6 @@ REBOL[
 	date: Aug-08-2013
 ]
 
-
-
-
 load-gui
 
 fonttest: #{6000A050D005}
@@ -26,11 +23,11 @@ chip8: make object! [
 	;;;0x200-0xFFF - Program ROM and work RAM
 
 	program: none
-	memory: array 4096
+	memory: #{00}
 	;memory-test: ;
 
 	;CPU Register, 15 8-bit registers, 16th is carry flag
-	v: array 16
+	v: #{00}
 	
 	;index register I
 	i: none
@@ -52,37 +49,18 @@ chip8: make object! [
 	sp: none
 
 	key: array 16
-	fontset: [ ;; see http://imgur.com/L3YxUmd
-		#{F0} #{90} #{90} #{90} #{F0} ;;// 0 1
-		#{20} #{60} #{20} #{20} #{70} ;;// 1 6
-		#{F0} #{10} #{F0} #{80} #{F0} ;;// 2 11
-		#{F0} #{10} #{F0} #{10} #{F0} ;;// 3 16
-		#{90} #{90} #{F0} #{10} #{10} ;;// 4 21
-		#{F0} #{80} #{F0} #{10} #{F0} ;;// 5 26
-		#{F0} #{80} #{F0} #{90} #{F0} ;;// 6 31
-		#{F0} #{10} #{20} #{40} #{40} ;;// 7 36
-		#{F0} #{90} #{F0} #{90} #{F0} ;;// 8 41
-		#{F0} #{90} #{F0} #{10} #{F0} ;;// 9 46
-		#{F0} #{90} #{F0} #{90} #{90} ;;// A 51
-		#{E0} #{90} #{E0} #{90} #{E0} ;;// B 56
-		#{F0} #{80} #{80} #{80} #{F0} ;;// C 61
-		#{E0} #{90} #{90} #{90} #{E0} ;;// D 66
-		#{F0} #{80} #{F0} #{80} #{F0} ;;// E 71
-		#{F0} #{80} #{F0} #{80} #{80} ;;// F 76
+	fontset: #{F0909090F02060202070F010F080F0F010F010F09090F01010F080F010F0F080F090F0F010204040F090F090F0F090F010F0F090F09090E090E090E0F0808080F0E0909090E0F080F080F0F080F08080} ;;// F 76
 	]
 	initialize: func [/local u] [
-		
+		repeat num 4095 [append memory #{00}]
+		repeat num 15 [append v #{00}]
 		pc: 513
-		opcode: to-binary [0]
+		opcode: #{0000}
 		i: 1
 		sp: 1
-		repeat num 4096 [poke memory num to-binary [0]]
-		repeat num 16 [poke v num to-binary [0]]
-		;repeat num gfx-size [poke gfx num false]
-		repeat num 16 [poke stack num to-binary [0]]
 		
 		;;load fontset --> Should be in #{0050} to #{00A0} which translates to memory index 81 to 161
-		repeat num 80 [poke memory (num) (pick fontset num)]
+		repeat num 80 [poke memory (num) to-integer (pick fontset num)]
 		
 		;;load game to memory -> 
 		program: fonttest;wall;pong;
