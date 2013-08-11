@@ -7,8 +7,47 @@ REBOL[
 
 load-gui
 
-fonttest: #{6000A050D005}
+fonttest: #{60006106620C63126418A000D005A005D105A00AD205A00FD305A014D015A019D115A01ED215A023D315A028D025A02DD125A032D225A037D325A03CD035A041D135A046D235A04BD335}
 
+comment{
+6000
+6106
+620C
+6312
+6418
+A000
+D005
+A005
+D105
+A00A
+D205
+A00F
+D305
+A014
+D015
+A019
+D115
+A01E
+D215
+A023
+D315
+A028
+D025
+A02D
+D125
+A032
+D225
+A037
+D325
+A03C
+D035;<---
+A041
+D135
+A046
+D235
+A04B
+D335
+}
 pong: #{6A026B0C6C3F6D0CA2EADAB6DCD66E0022D4660368026060F015F0073000121AC717770869FFA2F0D671A2EADAB6DCD66001E0A17BFE6004E0A17B02601F8B02DAB6600CE0A17DFE600DE0A17D02601F8D02DCD6A2F0D67186848794603F8602611F871246021278463F1282471F69FF47006901D671122A68026301807080B5128A68FE630A807080D53F0112A2610280153F0112BA80153F0112C880153F0112C26020F01822D48E3422D4663E3301660368FE33016802121679FF49FE69FF12C87901490269016004F0187601464076FE126CA2F2FE33F265F12964146500D4557415F229D45500EE808080808080800000000000}
 
 wall: #{12182057414C4C2062792044617669642057494E54455220A2E460006100621ED011D021700830401220A2DF603E6101D0157105311A1230D0146300C40F7408650184516503660267018840780269016A046B00A2DAD345D781FC0A22C46C01FC15FC073C001262A2DA8C708D80E99E127C4401127CD34574FED345EA9E128A4419128AD3457402D3458754886447016503473D65FD48016602481D66FEDCD1D7813701125E8C808C456D009CD012BE7D013D0512ACFC0A22C46B00125C22C47B01125CA2E5FB336C346D02F265F129DCD57C05F229DCD500EE8080808080E0E0E0E0E0FF}
@@ -49,8 +88,8 @@ chip8: make object! [
 	sp: none
 
 	key: array 16
-	fontset: #{F0909090F02060202070F010F080F0F010F010F09090F01010F080F010F0F080F090F0F010204040F090F090F0F090F010F0F090F09090E090E090E0F0808080F0E0909090E0F080F080F0F080F08080} ;;// F 76
-	]
+	fontset: #{F0909090F02060202070F010F080F0F010F010F09090F01010F080F010F0F080F090F0F010204040F090F090F0F090F010F0F090F09090E090E090E0F0808080F0E0909090E0F080F080F0F080F08080} 
+	
 	initialize: func [/local u] [
 		repeat num 4095 [append memory #{00}]
 		repeat num 15 [append v #{00}]
@@ -63,18 +102,16 @@ chip8: make object! [
 		repeat num 80 [poke memory (num) to-integer (pick fontset num)]
 		
 		;;load game to memory -> 
-		program: fonttest;wall;pong;
+		program: pong ;fonttest;wall;pong;
 		repeat num (length? program) [
-			;print reduce ["Setting memory location " (num + 512) " to value of " to-binary reduce [(pick program num)]] 
-			;u: (to-binary reduce [(pick program num)])
-			;print u
-			poke memory (num + 512) copy (to-binary reduce [(pick program num)])
+			;print reduce ["Setting memory location " (num + 512) " to value of " (pick program num)] 
+			poke memory (num + 512) to-integer (pick program num)
 		]
 		;;reset timers
 	]
 	load-program: does [
 		repeat num (length? program) [
-			poke memory (num + 512) to-binary reduce [(pick program num)]
+			poke memory (num + 512) (pick program num)
 		]
 	]
 	get-x: func [o-c] [
@@ -164,8 +201,8 @@ chip8: make object! [
 			]
 			#{6000} [
 				;; Sets VX to NN.
-				nn: (oc and #{00FF})
-				print [{------------------------>set V[} (get-x oc) {] to } nn {-->} to-integer nn]
+				nn: to-integer (oc and #{00FF})
+				print [{------------------------>Set V[} (get-x oc) {] to } nn {-->} to-integer nn]
 				poke v (get-x oc) nn
 				increment-pc
 			]
@@ -173,7 +210,7 @@ chip8: make object! [
 				;; Adds NN to VX.
 				nn: to-integer (oc and #{00FF})
 				print [{------------------------>Adding} nn {to the value of v[} (get-x oc) {]=} pick v (get-x oc) {=>} (nn + to-integer (pick v (get-x oc)))]
-				poke v (get-x oc) to-binary copy reduce [(nn + to-integer (pick v (get-x oc)))]
+				poke v (get-x oc) (nn + (pick v (get-x oc)))
 				increment-pc
 			]
 			#{8000} [
@@ -242,7 +279,7 @@ chip8: make object! [
 			#{A000} [
 				;;Sets I to the address NNN.
 				print[{------------------------>set I to } to-integer (oc and #{0FFF})]
-				i: 1 + to-integer (oc and #{0FFF})
+				i: to-integer (oc and #{0FFF})
 				increment-pc
 			]
 			#{B000} [
@@ -258,7 +295,7 @@ chip8: make object! [
 				;print ["0xDXYN:" opcode]
 				
 				height: to-integer (oc and #{000F})
-				poke v 16 #{00}
+				poke v 16 0
 				x-coord: (to-integer pick v (get-x oc))
 				y-coord: (to-integer pick v (get-y oc))
 				print [{------------------------>Draw sprite} i {at} x-coord {x} y-coord {of height} height]
@@ -266,20 +303,20 @@ chip8: make object! [
 				repeat num height [
 					;print (i + num - 1)
 					r: (pick memory (i + num))
-					w: enbase/base r 2
+					w: enbase/base (append copy #{} r) 2
 					print [{pattern is} w]
 					;;m corresponds to the number of bits in m
 					repeat m 8 [
 						if ((first w) = #"1") [
-							print coord-pair: to-pair reduce [(gfx-scale * (x-coord + m - 1)) (gfx-scale * (y-coord + num - 1))]
+							coord-pair: to-pair reduce [(gfx-scale * (x-coord + m - 1)) (gfx-scale * (y-coord + num - 1))]
 							;;Collision Detection
-							either  (coord-pair = black) [
+							either  ((pick gfx-img coord-pair) = black) [
 								print {Collision detected}
 								poke v 16 #{01}
 								repeat num-y gfx-scale [
 									repeat num-x gfx-scale [
-										draw-pair: coord-pair + to-pair reduce [num-x num-y]
-										;print [{Drew at } draw-pair {from} coord-pair]
+										draw-pair: coord-pair + to-pair reduce [num-x - 1 num-y - 1]
+										;print [{Drew at} draw-pair {from} coord-pair]
 										poke gfx-img draw-pair white
 									]
 								]
@@ -288,8 +325,8 @@ chip8: make object! [
 			
 								repeat num-y gfx-scale [
 									repeat num-x gfx-scale [
-										draw-pair: coord-pair + to-pair reduce [num-x num-y]
-										;print [{Drew at } draw-pair {from} coord-pair]
+										draw-pair: coord-pair + to-pair reduce [num-x - 1 num-y - 1]
+										;print [{Drew at} draw-pair {from} coord-pair]
 										poke gfx-img draw-pair black
 									]
 								]						
@@ -353,9 +390,9 @@ chip8: make object! [
 					#{0033} [
 						;; Stores BCD representation of VX at address I, I + 1 and I + 2
 						m: to-integer pick v (get-x oc)
-						poke memory i to-binary reduce [x: remainder m 10] 
-						poke memory (i + 1) to-binary reduce [((y: remainder m 100) - x) / 10]
-						poke memory (i + 2) to-binary reduce [(m - y) / 100]
+						poke memory i (x: remainder m 10)
+						poke memory (i + 1) (((y: remainder m 100) - x) / 10)
+						poke memory (i + 2) ((m - y) / 100)
 						print [{------------------------>Set BCD at memory[i]:} x {memory[i+1]:} y {memory [i+2]:} (m - y) / 100]
 						increment-pc
 					]
