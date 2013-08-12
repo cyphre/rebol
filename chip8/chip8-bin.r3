@@ -98,6 +98,18 @@ chip8: make object! [
 	;The system’s buzzer sounds whenever the sound timer reaches zero.
 	delay-timer: 0
 	sound-timer: 0
+	
+	get-timer-value: func [
+		timer-id [integer!]
+		/local u
+	][
+		either (u: second select guie/timers timer-id) [
+			either ((m: now/time - u/time) < 0:0:0) [0] [to-integer m]
+		][
+			0
+		]
+	]
+	
 
 	stack: array 16
 	sp: none
@@ -106,6 +118,7 @@ chip8: make object! [
 	fontset: #{F0909090F02060202070F010F080F0F010F010F09090F01010F080F010F0F080F090F0F010204040F090F090F0F090F010F0F090F09090E090E090E0F0808080F0E0909090E0F080F080F0F080F08080} 
 	
 	initialize: func [/local u] [
+		random/seed now/time/precise
 		repeat num 4095 [append memory #{00}]
 		repeat num 15 [append v #{00}]
 		pc: 513
@@ -123,13 +136,17 @@ chip8: make object! [
 			poke memory (num + 512) to-integer (pick program num)
 		]
 		;;reset timers
+		
+		view/no-wait m: layout [img1: image gfx-img options [rate: 30]]
 	]
 	load-program: does [
 		repeat num (length? program) [
 			poke memory (num + 512) (pick program num)
 		]
 	]
-	get-x: func [o-c] [
+	get-x: func [
+		o-c [binary!]
+	] [
 		(1 + shift to-integer (o-c and #{0F00}) -8)
 	]
 	get-y: func [o-c] [
@@ -147,7 +164,10 @@ chip8: make object! [
 		;return append copy (pick memory pc) copy (pick memory (pc + 1))
 	]
 	
-	decode-opcode: func [oc /local n m w x u x-coord y-coord height] [
+	decode-opcode: func [
+		oc /local n m w x u x-coord y-coord height
+	] [
+		wait 0
 		switch/default (oc and #{F000}) [
 			
 			#{0000} [
@@ -192,7 +212,7 @@ chip8: make object! [
 			]
 			#{3000} [
 				;; Skips the next instruction if VX equals NN.
-				nn: (oc and #{00FF})
+				nn: to-integer (oc and #{00FF})
 				print [{------------------------>V[ } (get-x oc) {] =} (pick v (get-x oc)) {will skip if equal to} nn {and is} ((pick v (get-x oc)) = nn)]
 				either ((pick v (get-x oc)) = nn) [
 					increment-pc
@@ -210,7 +230,7 @@ chip8: make object! [
 			]
 			#{5000} [
 				;; Skips the next instruction if VX equals VY.
-				print [{------------------------>}]
+				print [{------------------------>v[x]:} (pick v (get-x oc)) {v[y]} (pick v (get-y oc)) {=} ((pick v (get-x oc)) = (pick v (get-y oc)))]
 				either ((pick v (get-x oc)) = (pick v (get-y oc))) [
 					increment-pc
 					increment-pc
@@ -235,25 +255,25 @@ chip8: make object! [
 				switch/default (oc and #{000F}) [
 					#{0000} [
 						;8XY0;Sets VX to the value of VY.
-						print [{------------------------>}]
+						print [{------------------------>Set v[x]=} (get-x oc) {to} (pick v (get-y oc))]
 						poke v (get-x oc) (pick v (get-y oc))
 						increment-pc
 					]
 					#{0001} [
 					;8XY1;Sets VX to VX or VY.
-						print [{------------------------>}]
+						print [{------------------------>Set v[x]=} (get-x oc) {to} ((pick v (get-x oc)) or (pick v (get-y oc)))]
 						poke v (get-x oc) ((pick v (get-x oc)) or (pick v (get-y oc)))
 						increment-pc
 					]
 					#{0002} [
 					;8XY2;Sets VX to VX and VY.
-						print [{------------------------>}]
+						print [{------------------------>Set v[x]=} (get-x oc) {to} ((pick v (get-x oc)) and (pick v (get-y oc)))]
 						poke v (get-x oc) ((pick v (get-x oc)) and (pick v (get-y oc)))
 						increment-pc
 					]
 					#{0003} [
 					;8XY3;Sets VX to VX xor VY.
-						print [{------------------------>}]
+						print [{------------------------>Set v[x]=} (get-x oc) {to} ((pick v (get-x oc)) xor (pick v (get-y oc)))]
 						poke v (get-x oc) ((pick v (get-x oc)) xor (pick v (get-y oc)))
 						increment-pc
 					]
@@ -296,7 +316,7 @@ chip8: make object! [
 			]
 			#{A000} [
 				;;Sets I to the address NNN.
-				print[{------------------------>set I to } to-integer (oc and #{0FFF})]
+				print[{------------------------>Set I to } to-integer (oc and #{0FFF})]
 				i: to-integer (oc and #{0FFF})
 				increment-pc
 			]
@@ -306,7 +326,10 @@ chip8: make object! [
 			]
 			#{C000} [
 				;;Sets VX to a random number and NN.
-				print[{------------------------>}]
+				nn: to-integer oc and #{00FF}
+				m: random 256
+				print[{------------------------>Setting v[} get-x oc {]:} m {and} nn {=} m and nn]
+				poke v (get-x oc) to-integer ((random 256) and nn)
 				increment-pc
 			]
 			#{D000} [
@@ -355,7 +378,7 @@ chip8: make object! [
 					]					
 				]
 				increment-pc
-				view-gfx
+				update-gfx
 				draw-flag: true				
 			]
 			#{E000} [
@@ -375,8 +398,9 @@ chip8: make object! [
 				switch/default (oc and #{00FF}) [
 					#{0007} [
 						;;Sets VX to the value of the delay timer.
-						print[{------------------------>}]
-						poke v (get-x oc) append #{} delay-timer
+						print[{------------------------>Set V[} get-x oc {:} (get-timer-value delay-timer)]
+						;print (get-timer-value delay-timer)
+						poke v (get-x oc) (get-timer-value delay-timer)
 						increment-pc
 					]
 					#{000A} [
@@ -386,17 +410,21 @@ chip8: make object! [
 					]
 					#{0015} [
 						;;Sets the delay timer to VX.
-						print[{------------------------>}]
+						print[{------------------------>Set delay-timer to} pick v (get-x oc)]
+						delay-timer: set-timer [print "Delay timer done"] pick v (get-x oc)
 						increment-pc
 					]
 					#{0018} [
 						;;Sets the sound timer to VX.
 						print[{------------------------>}]
+						sound-timer: set-timer [print BEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEP!] pick v (get-x oc)
 						increment-pc
 					]
 					#{001E} [
 						;;Adds VX to I.
-						print[{------------------------>}]
+						m: i
+						i: i + pick v (get-x oc)
+						print[{------------------------>Set i:} i {=} m {+ v[x]=} pick v (get-x oc)]
 						increment-pc
 					]
 					#{0029} [
@@ -417,6 +445,11 @@ chip8: make object! [
 					]
 					#{0055} [
 						;;Stores V0 to VX in memory starting at address I.
+						repeat num 16 [
+							print [{------------------------>Set memory[} (i - 1 + num) {] =} (pick v num)]
+							poke memory (i - 1 + num) (pick v num)
+						]
+						increment-pc
 					]
 					#{0065} [
 						;;Fills V0 to VX with values from memory starting at address I.
@@ -451,9 +484,11 @@ chip8: make object! [
 			((switch x bcd-table) and #{0F}) or ((switch y bcd-table) and #{F0})
 	]
 
-	view-gfx: does [
-		view layout [image gfx-img]
+	update-gfx: does [
+		draw-face/now img1; gfx-img
+		wait 1
 	]
+	
 	update-timers: does [
 		
 	]
