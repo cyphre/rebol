@@ -1,0 +1,2 @@
+; dlltool --base-file C:\Users\kealist\AppData\Local\Temp/cca06192.base --output-exp test.exp --dllname test.dll --output-def libtest.def --no-export-all-symbols --add-stdcall-alias --exclude-symbol=DllMainCRTStartup@12 --def C:\Users\kealist\AppData\Local\Temp/cca06192.def --output-lib libtest.a
+EXPORTS

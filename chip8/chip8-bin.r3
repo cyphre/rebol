@@ -48,6 +48,21 @@ D235
 A04B
 D335
 }
+
+merlin: #{
+1219204D45524C494E2042792044617669642057494E54455222F9A31D601061
+0022CBA331600B611B22CB640422DF6500622822C1C2038020A359F51EF05560
+176108630183223300700A630283223300710AA317D016621422C1D016620522
+C1750154501235650060176108A317F30A330412796300129733051283700A63
+0112973307128D710A6302129733081269700A710A6303D016621422C1D016A3
+59F51EF0657501503012B55540126922DF7401122D22F9A3456010610E22CB12
+BFF215F207320012C300EE83006205D015F21E700885307520505012CF00EEA3
+59834073FDF333F265F129602B631BD0357005F229D03500EEA30F60176107D0
+18700AD018710AD01870F6D01800EEFF818181818181FF7E7E7E7E7E7EDBAA8B
+CBCBEF088F0DECA0A0B030BE5F5151D9D983828382FBE8088805E2BEA0B8203E
+80808080F8F785B795F576545654563A2A2A2A39B6A5B6A535
+}
+
 pong: #{6A026B0C6C3F6D0CA2EADAB6DCD66E0022D4660368026060F015F0073000121AC717770869FFA2F0D671A2EADAB6DCD66001E0A17BFE6004E0A17B02601F8B02DAB6600CE0A17DFE600DE0A17D02601F8D02DCD6A2F0D67186848794603F8602611F871246021278463F1282471F69FF47006901D671122A68026301807080B5128A68FE630A807080D53F0112A2610280153F0112BA80153F0112C880153F0112C26020F01822D48E3422D4663E3301660368FE33016802121679FF49FE69FF12C87901490269016004F0187601464076FE126CA2F2FE33F265F12964146500D4557415F229D45500EE808080808080800000000000}
 
 wall: #{12182057414C4C2062792044617669642057494E54455220A2E460006100621ED011D021700830401220A2DF603E6101D0157105311A1230D0146300C40F7408650184516503660267018840780269016A046B00A2DAD345D781FC0A22C46C01FC15FC073C001262A2DA8C708D80E99E127C4401127CD34574FED345EA9E128A4419128AD3457402D3458754886447016503473D65FD48016602481D66FEDCD1D7813701125E8C808C456D009CD012BE7D013D0512ACFC0A22C46B00125C22C47B01125CA2E5FB336C346D02F265F129DCD57C05F229DCD500EE8080808080E0E0E0E0E0FF}
@@ -102,7 +117,7 @@ chip8: make object! [
 		repeat num 80 [poke memory (num) to-integer (pick fontset num)]
 		
 		;;load game to memory -> 
-		program: pong ;fonttest;wall;pong;
+		program: merlin; pong ;fonttest;wall;pong;
 		repeat num (length? program) [
 			;print reduce ["Setting memory location " (num + 512) " to value of " (pick program num)] 
 			poke memory (num + 512) to-integer (pick program num)
@@ -139,6 +154,7 @@ chip8: make object! [
 				switch/default (oc and #{000F}) [
 					#{0000} [					
 						;;clear the screen
+						print [{------------------------>Clearing the screen}]
 						gfx-img: make image! to-pair reduce [64 * gfx-scale 32 * gfx-scale] black
 						increment-pc
 					]
@@ -146,13 +162,15 @@ chip8: make object! [
 						; returns from subroutine
 						sp: sp - 1
 						pc: pick stack sp
+						increment-pc
 						print [{------------------------>Returning from subroutine to pc =} pc]
 					]
 					
 				] [
 					;0NNN; Run program at address NNN
-					print oc
+					
 					pc: 1 + to-integer (oc and #{0FFF})
+					print [{------------------------>Running program at address} pc]
 					;prin "ERROR: Unknown 0x0XXX OPCODE:" print oc 
 					;increment-pc
 				]
@@ -160,12 +178,11 @@ chip8: make object! [
 			.
 			#{1000} [
 				;; Jumps to address NNN.
-				print [oc {: Jumping to address} 1 + to-integer (oc and #{0FFF})]
+				print [{------------------------>} oc {: Jumping to address} 1 + to-integer (oc and #{0FFF})]
 				pc: 1 + to-integer (oc and #{0FFF})
 			]
 			#{2000} [
 				;; Calls subroutine at NNN.
-				
 				poke stack sp pc
 				sp: sp + 1
 				u: (oc and #{0FFF})
@@ -210,7 +227,8 @@ chip8: make object! [
 				;; Adds NN to VX.
 				nn: to-integer (oc and #{00FF})
 				print [{------------------------>Adding} nn {to the value of v[} (get-x oc) {]=} pick v (get-x oc) {=>} (nn + to-integer (pick v (get-x oc)))]
-				poke v (get-x oc) (nn + (pick v (get-x oc)))
+				poke v (get-x oc) (remainder (num: nn + (pick v (get-x oc))) 256)
+				if ((num / 256) > 1) [poke v 15 1]
 				increment-pc
 			]
 			#{8000} [
@@ -262,19 +280,19 @@ chip8: make object! [
 					]
 					#{0007} [
 						;8XY6;Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
-						
+						print [{------------------------>}]
 						increment-pc
 					]
 					#{000E} [
 						;;Shifts VX left by one. VF is set to the value of the most significant bit of VX before the shift.
-						
+						print [{------------------------>}]
 						increment-pc
 					]
 				] [prin "ERROR: Unknown 0x8XXX OPCODE:" print oc increment-pc]
 			]
 			#{9000} [
 				;; Skips the next instruction if VX doesn't equal VY.
-
+				print [{------------------------>}]
 			]
 			#{A000} [
 				;;Sets I to the address NNN.
@@ -284,6 +302,7 @@ chip8: make object! [
 			]
 			#{B000} [
 				;;Jumps to the address NNN plus V0.
+				print [{------------------------>}]
 			]
 			#{C000} [
 				;;Sets VX to a random number and NN.
