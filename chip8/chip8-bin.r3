@@ -133,23 +133,25 @@ chip8: make object! [
 		repeat num 80 [poke memory (num) to-integer (pick fontset num)]
 		
 		;;load game to memory -> 
-		program: merlin; pong ;fonttest;wall;pong;
-		repeat num (length? program) [
-			;print reduce ["Setting memory location " (num + 512) " to value of " (pick program num)] 
-			poke memory (num + 512) to-integer (pick program num)
-		]
+		program: merlin
+		
 
 		print "Chip 8 Emulator Initialized..."
 
-		view m: layout [
+		view/maximized m: layout [
+			drop-down ["merlin" "pong" "wall" "fonttest"] on-action [switch (get-face face) [1 [program: merlin] 2 [program: pong] 3 [program: wall] 4 [program: fonttest] ]]
 			button "Start" on-action [
+				repeat num (length? program) [
+					;print reduce ["Setting memory location " (num + 512) " to value of " (pick program num)] 
+					poke memory (num + 512) to-integer (pick program num)
+				]
 			    print "Chip 8 Emulator Running Program..."
 				code: [chip8/emulate-cycle]
 				set-timer/repeat code (0:0:1 / chip8/hertz)
 			]
 			img1: image gfx-img 
 			
-		] 1000x1000
+		] 
 	]
 	load-program: does [
 		repeat num (length? program) [
