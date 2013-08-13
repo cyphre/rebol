@@ -116,10 +116,10 @@ chip8: make object! [
 	]
 	
 
-	stack: array 16
+	stack: copy array 16
 	sp: none
 
-	key: array 16
+	key: copy array 16
 	fontset: #{F0909090F02060202070F010F080F0F010F010F09090F01010F080F010F0F080F090F0F010204040F090F090F0F090F010F0F090F09090E090E090E0F0808080F0E0909090E0F080F080F0F080F08080} 
 	
 	initialize: func [/local u] [
@@ -139,7 +139,7 @@ chip8: make object! [
 		
 
 		print "Chip 8 Emulator Initialized..."
-
+		
 		view/maximized m: layout [
 			drop-down ["merlin" "pong" "wall" "fonttest"] on-action [
 				switch (get-face face) [
@@ -150,6 +150,22 @@ chip8: make object! [
 				]
 			]
 			button "Start" on-action [
+				;set 'gfx-img make image! reduce [to-pair reduce [64 * gfx-scale 32 * gfx-scale] ink-color]
+				set 'memory copy #{00}
+				set 'v copy #{00}
+				repeat num 4095 [append memory #{00}]
+				repeat num 15 [append v #{00}]
+				set 'pc 513
+				set 'opcode copy #{0000}
+				i: 1
+				sp: 1
+		
+				set 'stack copy array 16
+				set 'key copy array 16
+				
+				;;load fontset --> Should be in #{0050} to #{00A0} which translates to memory index 81 to 161
+				repeat num 80 [poke memory (num) to-integer (pick fontset num)]
+
 				;;load game to memory -> 
 				repeat num (length? program) [
 					;print reduce ["Setting memory location " (num + 512) " to value of " (pick program num)] 
@@ -158,6 +174,11 @@ chip8: make object! [
 			    print "Chip 8 Emulator Running Program..."
 				code: [chip8/emulate-cycle]
 				set-timer/repeat code (0:0:1 / chip8/hertz)
+			]
+			button "Stop" on-action [
+				foreach [t code] guie/timers [
+					clear-timer t
+				]
 			]
 			img1: image gfx-img 
 			
@@ -200,6 +221,7 @@ chip8: make object! [
 						;;clear the screen
 						print [{------------------------>Clearing the screen}]
 						gfx-img: make image! to-pair reduce [64 * gfx-scale 32 * gfx-scale] bg-color
+						draw-face/now img1
 						increment-pc
 					]
 					#{000E} [
