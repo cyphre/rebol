@@ -71,6 +71,7 @@ chip8: make object! [
 	;;opcode must be 2 bytes
 	opcode: none
 
+	
 	; 4k memory total
 	;;;0x000-0x1FF - Chip 8 interpreter (contains font set in emu)
 	;;;0x050-0x0A0 - Used for the built in 4x5 pixel font set (0-F)
@@ -93,6 +94,8 @@ chip8: make object! [
 	gfx-scale: 10
 	gfx-img: make image! reduce [to-pair reduce [64 * gfx-scale 32 * gfx-scale] white]
 	draw-flag: false
+	
+	hertz: 20
 	
 	;Timers count at 60 Hz. When set above zero they will count down to zero
 	;The system’s buzzer sounds whenever the sound timer reaches zero.
@@ -135,9 +138,18 @@ chip8: make object! [
 			;print reduce ["Setting memory location " (num + 512) " to value of " (pick program num)] 
 			poke memory (num + 512) to-integer (pick program num)
 		]
-		;;reset timers
-		
-		view/no-wait m: layout [img1: image gfx-img options [rate: 30]]
+
+		print "Chip 8 Emulator Initialized..."
+
+		view m: layout [
+			button "Start" on-action [
+			    print "Chip 8 Emulator Running Program..."
+				code: [chip8/emulate-cycle]
+				set-timer/repeat code (0:0:1 / chip8/hertz)
+			]
+			img1: image gfx-img 
+			
+		] 1000x1000
 	]
 	load-program: does [
 		repeat num (length? program) [
@@ -486,7 +498,7 @@ chip8: make object! [
 
 	update-gfx: does [
 		draw-face/now img1; gfx-img
-		wait 1
+		;wait 1
 	]
 	
 	update-timers: does [
@@ -503,12 +515,6 @@ chip8: make object! [
 print "Chip 8 Emulator Starting..."
 
 chip8/initialize
-
-print "Chip 8 Emulator Initialized..."
-
-print "Chip 8 Emulator Running Program..."
-
-loop (length? chip8/program) / 2 [chip8/emulate-cycle]
 
 print "Chip 8 Emulator Halting..."
 halt
