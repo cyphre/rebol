@@ -92,7 +92,9 @@ chip8: make object! [
 
 	;gfx: array gfx-size: (64 * 32)
 	gfx-scale: 10
-	gfx-img: make image! reduce [to-pair reduce [64 * gfx-scale 32 * gfx-scale] white]
+	bg-color: black
+	ink-color: white
+	gfx-img: make image! reduce [to-pair reduce [64 * gfx-scale 32 * gfx-scale] ink-color]
 	draw-flag: false
 	
 	hertz: 20
@@ -132,15 +134,23 @@ chip8: make object! [
 		;;load fontset --> Should be in #{0050} to #{00A0} which translates to memory index 81 to 161
 		repeat num 80 [poke memory (num) to-integer (pick fontset num)]
 		
-		;;load game to memory -> 
+		
 		program: merlin
 		
 
 		print "Chip 8 Emulator Initialized..."
 
 		view/maximized m: layout [
-			drop-down ["merlin" "pong" "wall" "fonttest"] on-action [switch (get-face face) [1 [program: merlin] 2 [program: pong] 3 [program: wall] 4 [program: fonttest] ]]
+			drop-down ["merlin" "pong" "wall" "fonttest"] on-action [
+				switch (get-face face) [
+					1 [set 'program merlin] 
+					2 [set 'program pong] 
+					3 [set 'program wall] 
+					4 [set 'program fonttest] 
+				]
+			]
 			button "Start" on-action [
+				;;load game to memory -> 
 				repeat num (length? program) [
 					;print reduce ["Setting memory location " (num + 512) " to value of " (pick program num)] 
 					poke memory (num + 512) to-integer (pick program num)
@@ -189,7 +199,7 @@ chip8: make object! [
 					#{0000} [					
 						;;clear the screen
 						print [{------------------------>Clearing the screen}]
-						gfx-img: make image! to-pair reduce [64 * gfx-scale 32 * gfx-scale] black
+						gfx-img: make image! to-pair reduce [64 * gfx-scale 32 * gfx-scale] bg-color
 						increment-pc
 					]
 					#{000E} [
@@ -326,17 +336,25 @@ chip8: make object! [
 			]
 			#{9000} [
 				;; Skips the next instruction if VX doesn't equal VY.
-				print [{------------------------>}]
+				nn: to-integer (oc and #{00FF})
+				print [{------------------------>V[ } (get-x oc) {] =} (pick v (get-x oc)) {will skip if not equal to} nn {and is} ((pick v (get-x oc)) = nn)]
+				either ((pick v (get-x oc)) != nn) [
+					increment-pc
+					increment-pc
+				] [increment-pc]	
 			]
 			#{A000} [
 				;;Sets I to the address NNN.
-				print[{------------------------>Set I to } to-integer (oc and #{0FFF})]
+				print[{------------------------>Set I to} to-integer (oc and #{0FFF})]
 				i: to-integer (oc and #{0FFF})
 				increment-pc
 			]
 			#{B000} [
 				;;Jumps to the address NNN plus V0.
-				print [{------------------------>}]
+				
+				nnn: to-integer (oc and #{0FFF})
+				print [{------------------------>Jump to address} nnn + (pick v 0)]
+				pc: nnn + (pick v 0)
 			]
 			#{C000} [
 				;;Sets VX to a random number and NN.
@@ -366,14 +384,14 @@ chip8: make object! [
 						if ((first w) = #"1") [
 							coord-pair: to-pair reduce [(gfx-scale * (x-coord + m - 1)) (gfx-scale * (y-coord + num - 1))]
 							;;Collision Detection
-							either  ((pick gfx-img coord-pair) = black) [
+							either  ((pick gfx-img coord-pair) = bg-color) [
 								print {Collision detected}
 								poke v 16 #{01}
 								repeat num-y gfx-scale [
 									repeat num-x gfx-scale [
 										draw-pair: coord-pair + to-pair reduce [num-x - 1 num-y - 1]
 										;print [{Drew at} draw-pair {from} coord-pair]
-										poke gfx-img draw-pair white
+										poke gfx-img draw-pair ink-color
 									]
 								]
 							] [
@@ -383,7 +401,7 @@ chip8: make object! [
 									repeat num-x gfx-scale [
 										draw-pair: coord-pair + to-pair reduce [num-x - 1 num-y - 1]
 										;print [{Drew at} draw-pair {from} coord-pair]
-										poke gfx-img draw-pair black
+										poke gfx-img draw-pair bg-color
 									]
 								]						
 							]
@@ -517,6 +535,11 @@ chip8: make object! [
 print "Chip 8 Emulator Starting..."
 
 chip8/initialize
+
+print "Clearing Timers"
+foreach [t code] guie/timers [
+	clear-timer t
+]
 
 print "Chip 8 Emulator Halting..."
 halt
