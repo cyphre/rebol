@@ -1,0 +1,394 @@
+Dr. Memory version 1.5.1 build 6 built on Feb 25 2013 00:45:31
+Application cmdline: ""C:\Users\kealist\Documents\GitHub\rebol\help3\r3-g4d9840f-console.exe""
+Recorded 75 suppression(s) from default C:\Program Files (x86)\Dr. Memory\bin\suppress-default.txt
+
+WARNING: application is missing line number information.
+
+Error #1: UNINITIALIZED READ: reading register eax
+# 0 msvcrt.dll!longjmp   
+# 1 r3.exe!RL_Init       +0x45e2   (0x0040635f <r3.exe+0x635f>)
+# 2 r3.exe!RL_Init       +0x4b7e   (0x004068fb <r3.exe+0x68fb>)
+# 3 r3.exe!RL_Init       +0x3e6e   (0x00405beb <r3.exe+0x5beb>)
+# 4 r3.exe!RL_Init       +0x272c   (0x004044a9 <r3.exe+0x44a9>)
+# 5 r3.exe!RL_Init       +0x2e88   (0x00404c05 <r3.exe+0x4c05>)
+# 6 r3.exe!RL_Init       +0x21140  (0x00422ebd <r3.exe+0x22ebd>)
+# 7 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+# 8 r3.exe!RL_Init       +0x3d5e   (0x00405adb <r3.exe+0x5adb>)
+# 9 r3.exe!RL_Init       +0x272c   (0x004044a9 <r3.exe+0x44a9>)
+#10 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+#11 r3.exe!RL_Init       +0x2422e  (0x00425fab <r3.exe+0x25fab>)
+Note: @0:00:02.259 in thread 6076
+Note: instruction: cmp    %eax $0x56433230
+
+Error #2: UNINITIALIZED READ: reading register eax
+# 0 msvcrt.dll!longjmp   
+# 1 r3.exe!RL_Init       +0x45e2   (0x0040635f <r3.exe+0x635f>)
+# 2 r3.exe!RL_Init       +0x4b4e   (0x004068cb <r3.exe+0x68cb>)
+# 3 r3.exe!RL_Init       +0x4f36   (0x00406cb3 <r3.exe+0x6cb3>)
+# 4 r3.exe!RL_Init       +0x40529  (0x004422a6 <r3.exe+0x422a6>)
+# 5 r3.exe!RL_Init       +0x7529   (0x004092a6 <r3.exe+0x92a6>)
+# 6 r3.exe!RL_Init       +0x7663   (0x004093e0 <r3.exe+0x93e0>)
+# 7 r3.exe!RL_Init       +0x2624   (0x004043a1 <r3.exe+0x43a1>)
+# 8 r3.exe!RL_Init       +0x21140  (0x00422ebd <r3.exe+0x22ebd>)
+# 9 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+#10 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+#11 r3.exe!RL_Init       +0x21a18  (0x00423795 <r3.exe+0x23795>)
+Note: @0:00:20.650 in thread 6076
+Note: instruction: cmp    %eax $0x56433230
+
+Error #3: UNINITIALIZED READ: reading 0x0089ebfc-0x0089ec05 9 byte(s) within 0x0089ebcc-0x0089ec05
+# 0 system call NtCreateFile parameter #9
+# 1 MSWSOCK.dll!?                                      +0x0      (0x71b53529 <MSWSOCK.dll+0x3529>)
+# 2 MSWSOCK.dll!?                                      +0x0      (0x71b53799 <MSWSOCK.dll+0x3799>)
+# 3 swi_ifslsp.dll!GetLspGuid                          +0x9225   (0x71b9aac6 <swi_ifslsp.dll+0xaac6>)
+# 4 WS2_32.dll!WSASocketW                              +0x9c     (0x76da3d70 <WS2_32.dll+0x3d70>)
+# 5 WS2_32.dll!socket                                  +0x55     (0x76da3f0e <WS2_32.dll+0x3f0e>)
+# 6 r3.exe!RL_Init                                     +0x5bf15  (0x0045dc92 <r3.exe+0x5dc92>)
+# 7 r3.exe!RL_Init                                     +0x5b6f1  (0x0045d46e <r3.exe+0x5d46e>)
+# 8 r3.exe!RL_Init                                     +0x2a00d  (0x0042bd8a <r3.exe+0x2bd8a>)
+# 9 r3.exe!RL_Init                                     +0x7d0f   (0x00409a8c <r3.exe+0x9a8c>)
+#10 r3.exe!RL_Init                                     +0x7529   (0x004092a6 <r3.exe+0x92a6>)
+#11 r3.exe!RL_Init                                     +0x7663   (0x004093e0 <r3.exe+0x93e0>)
+Note: @0:00:21.654 in thread 6076
+
+Error #4: UNINITIALIZED READ: reading 0x0089e82c-0x0089e835 9 byte(s) within 0x0089e7fc-0x0089e835
+# 0 system call NtCreateFile parameter #9
+# 1 MSWSOCK.dll!?                                      +0x0      (0x71b53529 <MSWSOCK.dll+0x3529>)
+# 2 r3.exe!RL_Init                                     +0x384d   (0x004055ca <r3.exe+0x55ca>)
+# 3 MSWSOCK.dll!?                                      +0x0      (0x71b53799 <MSWSOCK.dll+0x3799>)
+# 4 swi_ifslsp.dll!GetLspGuid                          +0x9225   (0x71b9aac6 <swi_ifslsp.dll+0xaac6>)
+# 5 WS2_32.dll!WSASocketW                              +0x9c     (0x76da3d70 <WS2_32.dll+0x3d70>)
+# 6 WS2_32.dll!socket                                  +0x55     (0x76da3f0e <WS2_32.dll+0x3f0e>)
+# 7 r3.exe!RL_Init                                     +0x5bf15  (0x0045dc92 <r3.exe+0x5dc92>)
+# 8 r3.exe!RL_Init                                     +0x5b6f1  (0x0045d46e <r3.exe+0x5d46e>)
+# 9 r3.exe!RL_Init                                     +0x2a00d  (0x0042bd8a <r3.exe+0x2bd8a>)
+#10 r3.exe!RL_Init                                     +0x7d0f   (0x00409a8c <r3.exe+0x9a8c>)
+#11 r3.exe!RL_Init                                     +0x7529   (0x004092a6 <r3.exe+0x92a6>)
+Note: @0:00:23.381 in thread 6076
+
+Error #5: UNINITIALIZED READ: reading register eax
+# 0 msvcrt.dll!longjmp   
+# 1 r3.exe!RL_Init       +0x45e2   (0x0040635f <r3.exe+0x635f>)
+# 2 r3.exe!RL_Init       +0x4aca   (0x00406847 <r3.exe+0x6847>)
+# 3 r3.exe!RL_Init       +0x2e8c1  (0x0043063e <r3.exe+0x3063e>)
+# 4 r3.exe!RL_Init       +0x34957  (0x004366d4 <r3.exe+0x366d4>)
+# 5 r3.exe!RL_Init       +0x7529   (0x004092a6 <r3.exe+0x92a6>)
+# 6 r3.exe!RL_Init       +0x7663   (0x004093e0 <r3.exe+0x93e0>)
+# 7 r3.exe!RL_Init       +0x2e88   (0x00404c05 <r3.exe+0x4c05>)
+# 8 r3.exe!RL_Init       +0x21140  (0x00422ebd <r3.exe+0x22ebd>)
+# 9 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+#10 r3.exe!RL_Init       +0x29a8   (0x00404725 <r3.exe+0x4725>)
+#11 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+Note: @0:00:23.560 in thread 6076
+Note: instruction: cmp    %eax $0x56433230
+
+Error #6: UNINITIALIZED READ: reading register eax
+# 0 msvcrt.dll!longjmp   
+# 1 r3.exe!RL_Init       +0x45e2   (0x0040635f <r3.exe+0x635f>)
+# 2 r3.exe!RL_Init       +0x21544  (0x004232c1 <r3.exe+0x232c1>)
+# 3 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+# 4 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+# 5 r3.exe!RL_Init       +0x76ad   (0x0040942a <r3.exe+0x942a>)
+# 6 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+# 7 r3.exe!RL_Init       +0x21a18  (0x00423795 <r3.exe+0x23795>)
+# 8 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+# 9 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+#10 r3.exe!RL_Init       +0x76ad   (0x0040942a <r3.exe+0x942a>)
+#11 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+Note: @0:01:04.395 in thread 6076
+Note: instruction: cmp    %eax $0x56433230
+
+Error #7: UNINITIALIZED READ: reading register eax
+# 0 msvcrt.dll!longjmp   
+# 1 r3.exe!RL_Init       +0x2289   (0x00404006 <r3.exe+0x4006>)
+# 2 r3.exe!RL_Init       +0x2321   (0x0040409e <r3.exe+0x409e>)
+# 3 r3.exe!RL_Init       +0x24c8   (0x00404245 <r3.exe+0x4245>)
+# 4 r3.exe!RL_Init       +0x3d5e   (0x00405adb <r3.exe+0x5adb>)
+# 5 r3.exe!RL_Init       +0x272c   (0x004044a9 <r3.exe+0x44a9>)
+# 6 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+# 7 r3.exe!RL_Init       +0x24760  (0x004264dd <r3.exe+0x264dd>)
+# 8 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+# 9 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+#10 r3.exe!RL_Init       +0x76ad   (0x0040942a <r3.exe+0x942a>)
+#11 r3.exe!RL_Init       +0x1f65   (0x00403ce2 <r3.exe+0x3ce2>)
+Note: @0:02:28.160 in thread 6076
+Note: instruction: cmp    %eax $0x56433230
+
+Error #8: UNINITIALIZED READ: reading register eax
+# 0 msvcrt.dll!longjmp   
+# 1 r3.exe!RL_Init       +0x2289   (0x00404006 <r3.exe+0x4006>)
+# 2 r3.exe!RL_Init       +0x21423  (0x004231a0 <r3.exe+0x231a0>)
+# 3 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+# 4 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+# 5 r3.exe!RL_Init       +0x216a8  (0x00423425 <r3.exe+0x23425>)
+# 6 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+# 7 r3.exe!RL_Init       +0x3d5e   (0x00405adb <r3.exe+0x5adb>)
+# 8 r3.exe!RL_Init       +0x272c   (0x004044a9 <r3.exe+0x44a9>)
+# 9 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+#10 r3.exe!RL_Init       +0x216a8  (0x00423425 <r3.exe+0x23425>)
+#11 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+Note: @0:02:28.168 in thread 6076
+Note: instruction: cmp    %eax $0x56433230
+
+Error #9: UNINITIALIZED READ: reading register eax
+# 0 msvcrt.dll!longjmp   
+# 1 r3.exe!RL_Init       +0x45e2   (0x0040635f <r3.exe+0x635f>)
+# 2 r3.exe!RL_Init       +0x21544  (0x004232c1 <r3.exe+0x232c1>)
+# 3 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+# 4 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+# 5 r3.exe!RL_Init       +0x218c2  (0x0042363f <r3.exe+0x2363f>)
+# 6 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+# 7 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+# 8 r3.exe!RL_Init       +0x76ad   (0x0040942a <r3.exe+0x942a>)
+# 9 r3.exe!RL_Init       +0x2624   (0x004043a1 <r3.exe+0x43a1>)
+#10 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+#11 r3.exe!RL_Init       +0x218c2  (0x0042363f <r3.exe+0x2363f>)
+Note: @0:03:05.394 in thread 6076
+Note: instruction: cmp    %eax $0x56433230
+
+Error #10: UNINITIALIZED READ: reading register eax
+# 0 msvcrt.dll!longjmp   
+# 1 r3.exe!RL_Init       +0x45e2   (0x0040635f <r3.exe+0x635f>)
+# 2 r3.exe!RL_Init       +0x21365  (0x004230e2 <r3.exe+0x230e2>)
+# 3 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+# 4 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+# 5 r3.exe!RL_Init       +0x216a8  (0x00423425 <r3.exe+0x23425>)
+# 6 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+# 7 r3.exe!RL_Init       +0x3d5e   (0x00405adb <r3.exe+0x5adb>)
+# 8 r3.exe!RL_Init       +0x272c   (0x004044a9 <r3.exe+0x44a9>)
+# 9 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+#10 r3.exe!RL_Init       +0x216a8  (0x00423425 <r3.exe+0x23425>)
+#11 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+Note: @0:03:05.396 in thread 6076
+Note: instruction: cmp    %eax $0x56433230
+
+Error #11: UNINITIALIZED READ: reading register eax
+# 0 msvcrt.dll!longjmp   
+# 1 r3.exe!RL_Init       +0x2289   (0x00404006 <r3.exe+0x4006>)
+# 2 r3.exe!RL_Init       +0x7b23   (0x004098a0 <r3.exe+0x98a0>)
+# 3 r3.exe!RL_Init       +0x23297  (0x00425014 <r3.exe+0x25014>)
+# 4 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+# 5 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+# 6 r3.exe!RL_Init       +0x24b14  (0x00426891 <r3.exe+0x26891>)
+# 7 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+# 8 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+# 9 r3.exe!RL_Init       +0x21321  (0x0042309e <r3.exe+0x2309e>)
+#10 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+#11 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+Note: @0:30:14.404 in thread 6076
+Note: instruction: cmp    %eax $0x56433230
+
+Error #12: UNINITIALIZED READ: reading register eax
+# 0 msvcrt.dll!longjmp   
+# 1 r3.exe!RL_Init                           +0x2289   (0x00404006 <r3.exe+0x4006>)
+# 2 r3.exe!RL_Init                           +0x27020  (0x00428d9d <r3.exe+0x28d9d>)
+# 3 r3.exe!RL_Init                           +0x744e   (0x004091cb <r3.exe+0x91cb>)
+# 4 r3.exe!RL_Init                           +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+# 5 r3.exe!RL_Do_String                      +0x1c     (0x00401b4d <r3.exe+0x1b4d>)
+# 6 r3.exe!?                                 +0x0      (0x004010fd <r3.exe+0x10fd>)
+# 7 ntdll.dll!RtlInitializeExceptionChain    +0x62     (0x77469f72 <ntdll.dll+0x39f72>)
+# 8 ntdll.dll!RtlInitializeExceptionChain    +0x35     (0x77469f45 <ntdll.dll+0x39f45>)
+Note: @0:30:21.401 in thread 6076
+Note: instruction: cmp    %eax $0x56433230
+
+Error #13: POSSIBLE LEAK 40 direct bytes 0x03640978-0x036409a0 + 0 indirect bytes
+# 0 fwpuclnt.dll!FwpmFreeMemory0                     +0x63     (0x6fae6373 <fwpuclnt.dll+0x6373>)
+# 1 fwpuclnt.dll!FwpmFreeMemory0                     +0x33     (0x6fae6343 <fwpuclnt.dll+0x6343>)
+# 2 fwpuclnt.dll!FwpmFreeMemory0                     +0x92     (0x6fae63a2 <fwpuclnt.dll+0x63a2>)
+# 3 RPCRT4.dll!NdrCorrelationPass                    +0x2b3    (0x76ec8af0 <RPCRT4.dll+0x18af0>)
+# 4 RPCRT4.dll!NdrConformantVaryingArrayUnmarshall   +0x290    (0x76ecc490 <RPCRT4.dll+0x1c490>)
+# 5 RPCRT4.dll!NdrPointerUnmarshall                  +0x2f     (0x76ec91ec <RPCRT4.dll+0x191ec>)
+# 6 RPCRT4.dll!NdrSimpleStructBufferSize             +0x417    (0x76ec916f <RPCRT4.dll+0x1916f>)
+# 7 RPCRT4.dll!NdrPointerUnmarshall                  +0x2f     (0x76ec91ec <RPCRT4.dll+0x191ec>)
+# 8 RPCRT4.dll!NdrClientInitialize                   +0x124    (0x76ec719e <RPCRT4.dll+0x1719e>)
+# 9 RPCRT4.dll!?                                     +0x0      (0x76f6015a <RPCRT4.dll+0xb015a>)
+#10 fwpuclnt.dll!FwpmEngineGetOption0                +0x69     (0x6faea832 <fwpuclnt.dll+0xa832>)
+#11 fwpuclnt.dll!FwpmEngineGetOption0                +0x38     (0x6faea801 <fwpuclnt.dll+0xa801>)
+
+Error #14: POSSIBLE LEAK 760 direct bytes 0x04500238-0x04500530 + 32 indirect bytes
+# 0 swi_ifslsp.dll!GetLspGuid+0x153    (0x71b919f4 <swi_ifslsp.dll+0x19f4>)
+# 1 WS2_32.dll!WSASocketW   +0x9c     (0x76da3d70 <WS2_32.dll+0x3d70>)
+# 2 WS2_32.dll!socket       +0x55     (0x76da3f0e <WS2_32.dll+0x3f0e>)
+# 3 r3.exe!RL_Init          +0x5bf15  (0x0045dc92 <r3.exe+0x5dc92>)
+# 4 r3.exe!RL_Init          +0x5b6f1  (0x0045d46e <r3.exe+0x5d46e>)
+# 5 r3.exe!RL_Init          +0x2a00d  (0x0042bd8a <r3.exe+0x2bd8a>)
+# 6 r3.exe!RL_Init          +0x7d0f   (0x00409a8c <r3.exe+0x9a8c>)
+# 7 r3.exe!RL_Init          +0x7529   (0x004092a6 <r3.exe+0x92a6>)
+# 8 r3.exe!RL_Init          +0x7663   (0x004093e0 <r3.exe+0x93e0>)
+# 9 r3.exe!RL_Init          +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+#10 r3.exe!RL_Init          +0x7794   (0x00409511 <r3.exe+0x9511>)
+#11 r3.exe!RL_Init          +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+
+Error #15: LEAK 4096 direct bytes 0x04189e28-0x0418ae28 + 0 indirect bytes
+# 0 r3.exe!RL_Init       +0x1f662  (0x004213df <r3.exe+0x213df>)
+# 1 r3.exe!RL_Init       +0x278d3  (0x00429650 <r3.exe+0x29650>)
+# 2 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+# 3 r3.exe!RL_Init       +0x2624   (0x004043a1 <r3.exe+0x43a1>)
+# 4 r3.exe!RL_Init       +0x21028  (0x00422da5 <r3.exe+0x22da5>)
+# 5 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+# 6 r3.exe!RL_Init       +0x3d5e   (0x00405adb <r3.exe+0x5adb>)
+# 7 r3.exe!RL_Init       +0x272c   (0x004044a9 <r3.exe+0x44a9>)
+# 8 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+# 9 r3.exe!RL_Init       +0x76ad   (0x0040942a <r3.exe+0x942a>)
+#10 r3.exe!RL_Init       +0x2624   (0x004043a1 <r3.exe+0x43a1>)
+#11 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+
+Error #16: POSSIBLE LEAK 34816 direct bytes 0x0820b500-0x08213d00 + 0 indirect bytes
+# 0 r3.exe!RL_Init       +0x1f662  (0x004213df <r3.exe+0x213df>)
+# 1 r3.exe!RL_Init       +0x1fb13  (0x00421890 <r3.exe+0x21890>)
+# 2 r3.exe!RL_Init       +0x2b8fa  (0x0042d677 <r3.exe+0x2d677>)
+# 3 r3.exe!RL_Init       +0x29f15  (0x0042bc92 <r3.exe+0x2bc92>)
+# 4 r3.exe!RL_Init       +0x7d0f   (0x00409a8c <r3.exe+0x9a8c>)
+# 5 r3.exe!RL_Init       +0x7529   (0x004092a6 <r3.exe+0x92a6>)
+# 6 r3.exe!RL_Init       +0x7663   (0x004093e0 <r3.exe+0x93e0>)
+# 7 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+# 8 r3.exe!RL_Init       +0x218c2  (0x0042363f <r3.exe+0x2363f>)
+# 9 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+#10 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+#11 r3.exe!RL_Init       +0x76ad   (0x0040942a <r3.exe+0x942a>)
+
+Error #17: LEAK 1220 direct bytes 0x02c27e28-0x02c282ec + 32 indirect bytes
+# 0 UxTheme.dll!Ordinal45                 +0xb2     (0x713f1cb1 <UxTheme.dll+0x11cb1>)
+# 1 UxTheme.dll!GetThemeBool              +0x22e    (0x713f6880 <UxTheme.dll+0x16880>)
+# 2 UxTheme.dll!Ordinal49                 +0x18f    (0x713f21e2 <UxTheme.dll+0x121e2>)
+# 3 UxTheme.dll!?                         +0x0      (0x713f0b96 <UxTheme.dll+0x10b96>)
+# 4 USER32.dll!GetPropW                   +0x72     (0x7518729a <USER32.dll+0x1729a>)
+# 5 USER32.dll!gapfnScSendMessage         +0x331    (0x751862fa <USER32.dll+0x162fa>)
+# 6 USER32.dll!GetThreadDesktop           +0xd6     (0x75186d3a <USER32.dll+0x16d3a>)
+# 7 USER32.dll!GetThreadDesktop           +0x184    (0x75186de8 <USER32.dll+0x16de8>)
+# 8 USER32.dll!GetClassLongW              +0x27a    (0x75188623 <USER32.dll+0x18623>)
+# 9 ntdll.dll!KiUserCallbackDispatcher    +0x2d     (0x7744010a <ntdll.dll+0x1010a>)
+#10 USER32.dll!UnregisterClassW           +0xab7    (0x7518aa3c <USER32.dll+0x1aa3c>)
+#11 USER32.dll!CreateWindowExW            +0x32     (0x75188a5c <USER32.dll+0x18a5c>)
+
+Error #18: POSSIBLE LEAK 760 direct bytes 0x044ad850-0x044adb48 + 32 indirect bytes
+# 0 swi_ifslsp.dll!GetLspGuid+0x153    (0x71b919f4 <swi_ifslsp.dll+0x19f4>)
+# 1 WS2_32.dll!WSASocketW   +0x9c     (0x76da3d70 <WS2_32.dll+0x3d70>)
+# 2 WS2_32.dll!socket       +0x55     (0x76da3f0e <WS2_32.dll+0x3f0e>)
+# 3 r3.exe!RL_Init          +0x5bf15  (0x0045dc92 <r3.exe+0x5dc92>)
+# 4 r3.exe!RL_Init          +0x5b6f1  (0x0045d46e <r3.exe+0x5d46e>)
+# 5 r3.exe!RL_Init          +0x2a00d  (0x0042bd8a <r3.exe+0x2bd8a>)
+# 6 r3.exe!RL_Init          +0x7d0f   (0x00409a8c <r3.exe+0x9a8c>)
+# 7 r3.exe!RL_Init          +0x7529   (0x004092a6 <r3.exe+0x92a6>)
+# 8 r3.exe!RL_Init          +0x7663   (0x004093e0 <r3.exe+0x93e0>)
+# 9 r3.exe!RL_Init          +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+#10 r3.exe!RL_Init          +0x76ad   (0x0040942a <r3.exe+0x942a>)
+#11 r3.exe!RL_Init          +0x7c9c   (0x00409a19 <r3.exe+0x9a19>)
+
+Error #19: POSSIBLE LEAK 148 direct bytes 0x00a2ee40-0x00a2eed4 + 0 indirect bytes
+# 0 KERNELBASE.dll!LocalAlloc                +0x5e     (0x757458de <KERNELBASE.dll+0x158de>)
+# 1 SHELL32.dll!CommandLineToArgvW           +0x89     (0x759b9f22 <SHELL32.dll+0x19f22>)
+# 2 r3.exe!RL_Init                           +0x5afd8  (0x0045cd55 <r3.exe+0x5cd55>)
+# 3 r3.exe!?                                 +0x0      (0x004010fd <r3.exe+0x10fd>)
+# 4 ntdll.dll!RtlInitializeExceptionChain    +0x62     (0x77469f72 <ntdll.dll+0x39f72>)
+# 5 ntdll.dll!RtlInitializeExceptionChain    +0x35     (0x77469f45 <ntdll.dll+0x39f45>)
+
+Error #20: POSSIBLE LEAK 4096 direct bytes 0x041b0250-0x041b1250 + 0 indirect bytes
+# 0 r3.exe!RL_Init       +0x1f662  (0x004213df <r3.exe+0x213df>)
+# 1 r3.exe!RL_Init       +0x278d3  (0x00429650 <r3.exe+0x29650>)
+# 2 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+# 3 r3.exe!RL_Init       +0x2624   (0x004043a1 <r3.exe+0x43a1>)
+# 4 r3.exe!RL_Init       +0x21028  (0x00422da5 <r3.exe+0x22da5>)
+# 5 r3.exe!RL_Init       +0x744e   (0x004091cb <r3.exe+0x91cb>)
+# 6 r3.exe!RL_Init       +0x3d5e   (0x00405adb <r3.exe+0x5adb>)
+# 7 r3.exe!RL_Init       +0x272c   (0x004044a9 <r3.exe+0x44a9>)
+# 8 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+# 9 r3.exe!RL_Init       +0x76ad   (0x0040942a <r3.exe+0x942a>)
+#10 r3.exe!RL_Init       +0x2624   (0x004043a1 <r3.exe+0x43a1>)
+#11 r3.exe!RL_Init       +0x3044   (0x00404dc1 <r3.exe+0x4dc1>)
+
+Error #21: LEAK 28 direct bytes 0x024cfc20-0x024cfc3c + 0 indirect bytes
+# 0 r3.exe!RL_Init                           +0x5c7c5  (0x0045e542 <r3.exe+0x5e542>)
+# 1 r3.exe!RL_Init                           +0x1390   (0x0040310d <r3.exe+0x310d>)
+# 2 r3.exe!RL_Init                           +0x68     (0x00401de5 <r3.exe+0x1de5>)
+# 3 r3.exe!?                                 +0x0      (0x004010fd <r3.exe+0x10fd>)
+# 4 ntdll.dll!RtlInitializeExceptionChain    +0x62     (0x77469f72 <ntdll.dll+0x39f72>)
+# 5 ntdll.dll!RtlInitializeExceptionChain    +0x35     (0x77469f45 <ntdll.dll+0x39f45>)
+
+Error #22: LEAK 28 direct bytes 0x024cfc68-0x024cfc84 + 0 indirect bytes
+# 0 r3.exe!RL_Init                           +0x5c7c5  (0x0045e542 <r3.exe+0x5e542>)
+# 1 r3.exe!RL_Init                           +0x13db   (0x00403158 <r3.exe+0x3158>)
+# 2 r3.exe!RL_Init                           +0x68     (0x00401de5 <r3.exe+0x1de5>)
+# 3 r3.exe!?                                 +0x0      (0x004010fd <r3.exe+0x10fd>)
+# 4 ntdll.dll!RtlInitializeExceptionChain    +0x62     (0x77469f72 <ntdll.dll+0x39f72>)
+# 5 ntdll.dll!RtlInitializeExceptionChain    +0x35     (0x77469f45 <ntdll.dll+0x39f45>)
+
+Error #23: LEAK 206 direct bytes 0x00a55948-0x00a55a16 + 0 indirect bytes
+# 0 ntdll.dll!RtlLocaleNameToLcid            +0x104    (0x7747adfe <ntdll.dll+0x4adfe>)
+# 1 ntdll.dll!RtlGetParentLocaleName         +0xa9c    (0x7747bbe2 <ntdll.dll+0x4bbe2>)
+# 2 ntdll.dll!RtlGetParentLocaleName         +0xa52    (0x7747bb98 <ntdll.dll+0x4bb98>)
+# 3 ntdll.dll!RtlGetParentLocaleName         +0x9ab    (0x7747baf1 <ntdll.dll+0x4baf1>)
+# 4 KERNEL32.dll!CreateActCtxW               +0x7a4    (0x76a599d4 <KERNEL32.dll+0x199d4>)
+# 5 KERNEL32.dll!CreateActCtxW               +0x3d8    (0x76a59608 <KERNEL32.dll+0x19608>)
+# 6 KERNEL32.dll!FindActCtxSectionStringW    +0xd7     (0x76a5a7d0 <KERNEL32.dll+0x1a7d0>)
+# 7 ntdll.dll!LdrResFindResourceDirectory    +0x447    (0x7746deed <ntdll.dll+0x3deed>)
+# 8 ntdll.dll!LdrResSearchResource           +0x942    (0x7746d72f <ntdll.dll+0x3d72f>)
+# 9 ntdll.dll!LdrLoadDll                     +0x7a     (0x7746c558 <ntdll.dll+0x3c558>)
+#10 KERNELBASE.dll!LoadLibraryExW            +0x1f0    (0x75742c95 <KERNELBASE.dll+0x12c95>)
+#11 WS2_32.dll!WahOpenApcHelper              +0x1701   (0x76da9b85 <WS2_32.dll+0x9b85>)
+
+Error #24: LEAK 8 direct bytes 0x00a57ed8-0x00a57ee0 + 86 indirect bytes
+# 0 ntdll.dll!RtlLCIDToCultureName                +0x327    (0x77474972 <ntdll.dll+0x44972>)
+# 1 ntdll.dll!RtlLCIDToCultureName                +0x2e0    (0x7747492b <ntdll.dll+0x4492b>)
+# 2 ntdll.dll!RtlGetThreadPreferredUILanguages    +0x116    (0x774741de <ntdll.dll+0x441de>)
+# 3 KERNEL32.dll!CreateActCtxW                    +0x7a4    (0x76a599d4 <KERNEL32.dll+0x199d4>)
+# 4 KERNEL32.dll!CreateActCtxW                    +0x3d8    (0x76a59608 <KERNEL32.dll+0x19608>)
+# 5 KERNEL32.dll!FindActCtxSectionStringW         +0xd7     (0x76a5a7d0 <KERNEL32.dll+0x1a7d0>)
+# 6 ntdll.dll!LdrResFindResourceDirectory         +0x447    (0x7746deed <ntdll.dll+0x3deed>)
+# 7 ntdll.dll!LdrResSearchResource                +0x942    (0x7746d72f <ntdll.dll+0x3d72f>)
+# 8 ntdll.dll!LdrLoadDll                          +0x7a     (0x7746c558 <ntdll.dll+0x3c558>)
+# 9 KERNELBASE.dll!LoadLibraryExW                 +0x1f0    (0x75742c95 <KERNELBASE.dll+0x12c95>)
+#10 WS2_32.dll!WahOpenApcHelper                   +0x1701   (0x76da9b85 <WS2_32.dll+0x9b85>)
+#11 WS2_32.dll!WahOpenApcHelper                   +0x1832   (0x76da9cb6 <WS2_32.dll+0x9cb6>)
+
+Error #25: POSSIBLE LEAK 292 direct bytes 0x001f1350-0x001f1474 + 0 indirect bytes
+# 0 msvcrt.dll!_malloc_crt
+# 1 msvcrt.dll!__setargv 
+# 2 msvcrt.dll!__getmainargs
+# 3 r3.exe!?                                 +0x0      (0x00401077 <r3.exe+0x1077>)
+# 4 ntdll.dll!RtlInitializeExceptionChain    +0x62     (0x77469f72 <ntdll.dll+0x39f72>)
+# 5 ntdll.dll!RtlInitializeExceptionChain    +0x35     (0x77469f45 <ntdll.dll+0x39f45>)
+
+Error #26: LEAK 16 direct bytes 0x001fff58-0x001fff68 + 0 indirect bytes
+# 0 r3.exe!RL_Init                           +0x5c7c5  (0x0045e542 <r3.exe+0x5e542>)
+# 1 r3.exe!RL_Init                           +0x12fa   (0x00403077 <r3.exe+0x3077>)
+# 2 r3.exe!RL_Init                           +0x68     (0x00401de5 <r3.exe+0x1de5>)
+# 3 r3.exe!?                                 +0x0      (0x004010fd <r3.exe+0x10fd>)
+# 4 ntdll.dll!RtlInitializeExceptionChain    +0x62     (0x77469f72 <ntdll.dll+0x39f72>)
+# 5 ntdll.dll!RtlInitializeExceptionChain    +0x35     (0x77469f45 <ntdll.dll+0x39f45>)
+
+Error #27: LEAK 16 direct bytes 0x001fff90-0x001fffa0 + 0 indirect bytes
+# 0 r3.exe!RL_Init                           +0x5c7c5  (0x0045e542 <r3.exe+0x5e542>)
+# 1 r3.exe!RL_Init                           +0x1345   (0x004030c2 <r3.exe+0x30c2>)
+# 2 r3.exe!RL_Init                           +0x68     (0x00401de5 <r3.exe+0x1de5>)
+# 3 r3.exe!?                                 +0x0      (0x004010fd <r3.exe+0x10fd>)
+# 4 ntdll.dll!RtlInitializeExceptionChain    +0x62     (0x77469f72 <ntdll.dll+0x39f72>)
+# 5 ntdll.dll!RtlInitializeExceptionChain    +0x35     (0x77469f45 <ntdll.dll+0x39f45>)
+
+DUPLICATE ERROR COUNTS:
+	Error #   1:      2
+	Error #   2:   1819
+	Error #   3:    593
+	Error #   4:    634
+	Error #   5:     40
+	Error #   6:      6
+	Error #   8:      2
+	Error #  14:    592
+	Error #  15:     38
+	Error #  16:     18
+	Error #  18:      7
+
+SUPPRESSIONS USED:
+
+ERRORS FOUND:
+      0 unique,     0 total unaddressable access(es)
+     12 unique,  3101 total uninitialized access(es)
+      0 unique,     0 total invalid heap argument(s)
+      0 unique,     0 total GDI usage error(s)
+      0 unique,     0 total warning(s)
+      8 unique,    45 total, 157288 byte(s) of leak(s)
+      7 unique,   621 total, 1105672 byte(s) of possible leak(s)
+ERRORS IGNORED:
+   4079 still-reachable allocation(s)
+         (re-run with "-show_reachable" for details)
+Details: C:\Users\kealist\AppData\Roaming\Dr. Memory\DrMemory-r3-g4d9840f-console.exe.7992.000\results.txt
