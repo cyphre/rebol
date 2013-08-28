@@ -434,15 +434,18 @@ system/ports/system/awake: func [
 		]
 	]
 
-	write debuger reduce ["Finished Loop" newline "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" newline]
-	
+	write debuger reduce ["Finished Loop" newline "~~~~~~~~~~~~~~~~PORTS~~~~~~~~~~~~~~~~~~" newline]
+
 	; No wake ports (just a timer), return now.
 	unless block? ports [return none]
-
-
+	write debuger mold ports
+	ij: 0
 	; Are any of the requested ports awake?
 	forall ports [
-		if port: find waked first ports [remove port return true]
+		if port: find waked first ports [
+			print (ij: ij + 1)
+			remove port return true
+		]
 	]
 	
 	write debuger reduce [newline "END" newline newline]
