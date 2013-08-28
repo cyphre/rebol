@@ -1,0 +1,13 @@
+[
+    <event_type> 1
+    <time_stamp> 1377666405
+    <content> {<div class='partial'>I respond to these commands <br> Note: [] means optional input or shows expected datatype, (|) means choice: <br> (do|do/2|do/red|do/boron) expression "evaluates Rebol/Rebol-like expression in a sandboxed interpreter" <br> (hi|hello|goodnight|goodbye|bye|[good][night|morning|afternoon|evening]) some-text "returns a greeting to the user who greeted bot" <br> cc id "retrieves curecode data" <br> delete [ loud ] "in reply to a bot message will delete if in time" <br> do/ideone which-lang [word! string! integer!] expression "evaluates a source expression for the specified language"</div>}
+    <id> 22809193
+    <user_id> 2109883
+    <user_name> "RebolBot"
+    <room_id> 291
+    <room_name> "[Rebol and Red]"
+    <message_id> 11476711
+    <parent_id> 11476709
+    <show_parent> true
+]

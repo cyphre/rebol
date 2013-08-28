@@ -1,0 +1,9 @@
+[
+    <event_type> 1
+    <time_stamp> 1377689011
+    <content> {<div class="onebox ob-post"><div class="ob-post-votes" title="This question has a score of -1.">-1</div><img width="20" height="20" class="ob-post-siteicon" src="http://cdn.sstatic.net/stackoverflow/img/apple-touch-icon.png" title="Stack Overflow"/><div class="ob-post-title">Q: <a style="color: #0077CC;" href="http://stackoverflow.com/questions/18486131/will-red-rebol-support-tel-in-the-future">Will Red/REBOL support TEL! in the future?</a></div><p class="ob-post-body"><img width="32" height="32" class="user-gravatar32" src="https://www.gravatar.com/avatar/78fb5a82c47f46fc0ee0c7ee71566ab8?s=128&d=identicon&r=PG&f=1" title="JerryTsai" alt="JerryTsai"/>REBOL supports EMAIL!, and Red might support EMAIL! too. In some mobile apps, telephone number is more important than e-mail, so I hope Red/REBOL will support a new datatype TEL!, and make it a literal type, which can be recognized by tokenizer. A format like this would be good: +886-988210800. W...</p><div class="ob-post-tags"><a href="http://stackoverflow.com/questions/tagged/types"><span class="ob-post-tag" style="background-color: #E0EAF1; color: #3E6D8E; border-color: #3E6D8E; border-style: solid;">types</span></a> <a href="http://stackoverflow.com/questions/tagged/rebol"><span class="ob-post-tag" style="background-color: #E0EAF1; color: #3E6D8E; border-color: #3E6D8E; border-style: solid;">rebol</span></a> <a href="http://stackoverflow.com/questions/tagged/telephone"><span class="ob-post-tag" style="background-color: #E0EAF1; color: #3E6D8E; border-color: #3E6D8E; border-style: solid;">telephone</span></a> <a href="http://stackoverflow.com/questions/tagged/red"><span class="ob-post-tag" style="background-color: #E0EAF1; color: #3E6D8E; border-color: #3E6D8E; border-style: solid;">red</span></a></div><div class="clear-both"></div></div>}
+    <user_id> -2
+    <user_name> "Feeds"
+    <room_id> 291
+    <message_id> 11483102
+]
