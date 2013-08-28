@@ -443,7 +443,7 @@ system/ports/system/awake: func [
 	; Are any of the requested ports awake?
 	forall ports [
 		if port: find waked first ports [
-			print (ij: ij + 1)
+			write debuger reduce[ (ij: ij + 1) newline]
 			remove port return true
 		]
 	]
