@@ -408,13 +408,16 @@ system/ports/system/awake: func [
 	ports "Port list (Copy of block passed to WAIT)"
 	/local event port waked
 ] [
-	debuger: open %out.txt
+	debugger: open/new %out.txt
+
+
 	waked: sport/data ; The wake list (pending awakes)
+	write debugger reduce ["============================" newline]
+	write debugger reduce [">>>>> Length is" (length? waked) newline]
 	
-	write debuger reduce ["============================" newline]
-	write debuger reduce [">>>>> Length is" (length? waked) newline]
-	write debuger waked
-	write debuger reduce [{-=-=-=-=-=-=-=-=-=-=-=-COMPLETE} newline]
+	write debugger waked
+
+	write debugger reduce [{-=-=-=-=-=-=-=-=-=-=-=-COMPLETE-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-} newline]
 
 	; Process all events (even if no awake ports).
 	; Do only 8 events at a time (to prevent polling lockout).
@@ -434,21 +437,22 @@ system/ports/system/awake: func [
 		]
 	]
 
-	write debuger reduce ["Finished Loop" newline "~~~~~~~~~~~~~~~~PORTS~~~~~~~~~~~~~~~~~~" newline]
+	write debugger reduce ["Finished Loop" newline "~~~~~~~~~~~~~~~~PORTS~~~~~~~~~~~~~~~~~~" newline]
 
 	; No wake ports (just a timer), return now.
 	unless block? ports [return none]
-	write debuger mold ports
+
+	write debugger mold ports
 	ij: 0
 	; Are any of the requested ports awake?
 	forall ports [
 		if port: find waked first ports [
-			write debuger reduce[ (ij: ij + 1) newline]
+			write debugger reduce[ (ij: ij + 1) newline]
 			remove port return true
 		]
 	]
-	
-	write debuger reduce [newline "END" newline newline]
+
+	write debugger reduce [newline "END" newline newline]
 
 	false ; keep waiting
 ]
@@ -466,32 +470,6 @@ forever [
 		]
 	]
 	wait 2
-]
-
-halt
-
-forever [
-	print "next loop"
-	t: open timer://
-	t/awake: func [event] [
-		print ["firing at " now/precise]
-		mini-http/cookies read-target-url 'POST rejoin ["since=0&mode=Messages&msgCount=" no-of-messages "&fkey=" fkey] 60 bot-cookie
-		print ["end of fetch " now/precise]
-		len: length? system/contexts/user/all-messages
-		attempt [
-			tool-data: update-icons referrer-url
-			if tool-data <> tool-bar-data [
-				print ["updating tool bar at " now]
-				save/all %toolbar.r3 tool-data
-				tool-data: none
-			]
-		]
-	]
-	write t [3000] ; reduce [ wait-period * 1000 ]
-	print ["waiting " reduce [wait-period * 1000] " at " now/precise]
-	; attempt [wait 1 + wait-period]
-	wait 3
-	; close t
 ]
 
 halt
