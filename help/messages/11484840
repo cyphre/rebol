@@ -1,9 +1,0 @@
-[
-    <event_type> 1
-    <time_stamp> 1377693896
-    <content> {<div class="onebox ob-blog"><div class="ob-blog-title"><a href="http://curecode.org/rebol3/ticket.rsp?id=1863#comments">CureCode: MAKE object object doesn't rebind functions</a></div><div class="ob-blog-meta">posted on August 28, 2013 by Ladislav</div><div class="ob-blog-text"><p>[Comment] Fixed by https://github.com/rebol/rebol/pull/139</p></div></div>}
-    <user_id> -2
-    <user_name> "Feeds"
-    <room_id> 291
-    <message_id> 11484840
-]
